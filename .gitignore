@@ -6,7 +6,7 @@ gen/
 *.sqlite-wal
 .env
 .env.example
-content/*.json
+
 *.log
 .vscode/
 .idea/
