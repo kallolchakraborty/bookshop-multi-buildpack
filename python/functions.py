@@ -142,10 +142,56 @@ def _read_stream(response, emit):
             emit(delta)
     return answer
 
+def ask_agent(payload, emit=None):
+    """LangGraph + SAP HANA Vector Engine RAG Agent workflow handler."""
+    try:
+        from python.agent.graph import bookshop_graph
+        if bookshop_graph is not None:
+            model = payload.get("model") or AI_MODEL
+            base_url = (payload.get("baseUrl") or AI_BASE_URL).rstrip("/")
+            api_key = payload.get("apiKey") or AI_API_KEY
+
+            initial_state = {
+                "user_prompt": payload.get("prompt", ""),
+                "model": model,
+                "base_url": base_url,
+                "api_key": api_key,
+                "streaming": emit is not None,
+                "chat_history": [],
+                "catalog_context": "",
+                "intent": "",
+                "discount_rate": 0.0,
+                "llm_response": "",
+                "final_answer": "",
+                "applied_discount": 0.0,
+                "intent_detected": "",
+            }
+
+            started = time.time() * 1000
+            res = bookshop_graph.invoke(initial_state)
+            answer = res.get("final_answer", "")
+            if emit:
+                for char in answer:
+                    emit(char)
+            return {
+                "answer": answer,
+                "model": model,
+                "latency": int(time.time() * 1000 - started),
+                "intent": res.get("intent_detected", "general"),
+                "discount_applied": res.get("applied_discount", 0.0),
+            }
+    except Exception as exc:
+        print(f"[Agent Fallback] Using ask_ai fallback: {exc}")
+
+    # Fallback to standard ask_ai if LangGraph/LangChain packages aren't present
+    return ask_ai(payload, emit=emit)
+
 
 ACTIONS = {
     "discount": apply_discount,
     "ask": ask_ai,
+    "ask_rag": ask_agent,
+    "ask_agent": ask_agent,
 }
 
 

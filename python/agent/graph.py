@@ -1,0 +1,50 @@
+"""LangGraph StateGraph definition for the Bookshop AI Agent."""
+from typing import TypedDict, List, Any
+from python.agent.nodes import (
+    route_intent,
+    hana_vector_rag_node,
+    apply_discount_node,
+    call_llm_node,
+    format_output_node,
+)
+
+class BookshopAgentState(TypedDict):
+    # Input
+    user_prompt: str
+    model: str
+    base_url: str
+    api_key: str
+    streaming: bool
+    chat_history: List[Any]
+    catalog_context: str
+    # Intermediate
+    intent: str
+    discount_rate: float
+    # Output
+    llm_response: str
+    final_answer: str
+    applied_discount: float
+    intent_detected: str
+
+def build_bookshop_graph():
+    try:
+        from langgraph.graph import StateGraph, END
+        g = StateGraph(BookshopAgentState)
+        g.add_node("route_intent",        route_intent)
+        g.add_node("hana_vector_rag",     hana_vector_rag_node)
+        g.add_node("apply_discount",      apply_discount_node)
+        g.add_node("call_llm",            call_llm_node)
+        g.add_node("format_output",       format_output_node)
+        
+        g.set_entry_point("route_intent")
+        g.add_edge("route_intent",        "hana_vector_rag")
+        g.add_edge("hana_vector_rag",     "apply_discount")
+        g.add_edge("apply_discount",      "call_llm")
+        g.add_edge("call_llm",            "format_output")
+        g.add_edge("format_output",       END)
+        return g.compile()
+    except ImportError:
+        # Fallback if langgraph is not yet installed in local environment
+        return None
+
+bookshop_graph = build_bookshop_graph()

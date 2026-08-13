@@ -1,1 +1,17 @@
-# Python runtime is provided by the python buildpack; no third-party deps.
+# LangChain ecosystem
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-community>=0.3.0
+langchain-openai>=0.2.0
+
+# SAP HANA Cloud database client (for Vector Engine RAG)
+hdbcli>=2.20.0
+
+# LangGraph (agent orchestration)
+langgraph>=0.2.0
+
+# LangSmith (observability)
+langsmith>=0.1.0
+
+# Streaming & HTTP helpers
+httpx>=0.27.0

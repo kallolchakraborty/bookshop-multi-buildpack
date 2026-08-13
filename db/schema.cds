@@ -17,6 +17,8 @@ entity Book {
   author   : Association to Author; // many-to-one navigation to the author
   stock    : Integer;               // copies currently in stock
   price    : Decimal(9, 2);         // base price, discounted by Python functions
+  descr    : String(1000);          // book description for semantic search RAG
+  embedding: Vector(1536);          // native SAP HANA Cloud REAL_VECTOR column
 }
 
 /// A customer order for books.

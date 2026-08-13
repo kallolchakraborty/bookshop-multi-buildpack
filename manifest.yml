@@ -27,6 +27,10 @@ applications:
       NODE_ENV: production
       AI_MODEL: meta/llama-3.3-70b-instruct # default model used by the Python ask() call
       AI_TIMEOUT: "900" # NVIDIA meta/llama-3.3-70b-instruct can take ~2min to first token
+      # LangSmith Telemetry (Optional: Set LANGCHAIN_API_KEY in BTP / CF env)
+      LANGCHAIN_TRACING_V2: "true"
+      LANGCHAIN_ENDPOINT: "https://api.smith.langchain.com"
+      LANGCHAIN_PROJECT: "bookshop-multi-buildpack"
     services:
       - bookshop-multi-buildpack-db # HDI container on the existing HANA Cloud free-tier instance (hana-cloud)
       - destination-service # Destination service: Node resolves "meta-llama-3-3-70b-instruct" (URL + auth) for Python
