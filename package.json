@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "CAP Node.js bookshop app with Python functions and destination-backed AI APIs on multiple buildpacks, plus documentation website.",
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "dependencies": {
     "@cap-js/hana": "^3.0.2",
