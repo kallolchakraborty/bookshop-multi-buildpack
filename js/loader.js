@@ -251,12 +251,13 @@
   }
 
   function loadContent(rawHash) {
+    var map = window.__ROUTE_MAP || routeMap || {};
     var hash = getCleanHash(rawHash);
     if (!hash) return;
     if (currentHash === hash) return;
     currentHash = hash;
 
-    var contentPath = routeMap[hash];
+    var contentPath = map[hash];
     if (!contentPath) {
       main.innerHTML = errorHTML;
       return;
@@ -294,10 +295,11 @@
   });
 
   document.addEventListener('DOMContentLoaded', function() {
+    var map = window.__ROUTE_MAP || routeMap || {};
     var hash = window.location.hash;
     var clean = getCleanHash(hash);
-    if (!clean || !routeMap[clean]) {
-      clean = Object.keys(routeMap)[0] || '#introduction';
+    if (!clean || !map[clean]) {
+      clean = Object.keys(map)[0] || '#introduction';
     }
     loadContent(clean);
   });
