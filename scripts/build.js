@@ -65,6 +65,15 @@ function escapeHtml(text) {
 function parseMarkdown(md) {
   let html = md;
   let codeBlocks = [];
+
+  // Extract raw HTML blocks (e.g. <div class="...">...</div>) before any transforms
+  let rawHtmlBlocks = [];
+  html = html.replace(/(<div[\s\S]*?<\/div>)/g, function(match) {
+    const placeholder = `\x00RAW_HTML_${rawHtmlBlocks.length}\x00`;
+    rawHtmlBlocks.push(match);
+    return placeholder;
+  });
+
   html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
     const language = lang || 'plaintext';
     const placeholder = `\x00CODE_BLOCK_${codeBlocks.length}\x00`;
@@ -169,6 +178,12 @@ function parseMarkdown(md) {
   html = html.replace(/^\s*<h1>.*?<\/h1>\s*/i, '');
   html = html.replace(/^\s*<h2>What is This Project\?<\/h2>\s*/i, '');
   html = html.replace(/^\s*<h2>Overview<\/h2>\s*/i, '');
+
+  // Restore raw HTML blocks
+  rawHtmlBlocks.forEach(function(block, index) {
+    const placeholder = `\x00RAW_HTML_${index}\x00`;
+    html = html.replace(placeholder, block);
+  });
 
   return html;
 }

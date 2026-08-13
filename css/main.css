@@ -797,3 +797,127 @@ html.dark mark {
   border-left: 2px solid var(--brand-primary);
   padding-left: 0.5rem;
 }
+
+/* ========== Test Pyramid Component ========== */
+.test-pyramid-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin: 2rem auto;
+  max-width: 560px;
+  font-family: inherit;
+}
+
+.pyramid-tier {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-radius: 8px;
+  padding: 0.85rem 1.5rem;
+  margin-bottom: 3px;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: default;
+}
+.pyramid-tier:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(233, 84, 32, 0.25);
+}
+
+/* Trapezoid illusion using width percentages */
+.tier-e2e  { width: 52%; }
+.tier-api  { width: 76%; }
+.tier-unit { width: 100%; }
+
+/* E2E — top, lightest orange tint */
+.tier-e2e {
+  background: linear-gradient(135deg, rgba(233,84,32,0.65) 0%, rgba(195,65,19,0.75) 100%);
+  border: 1px solid rgba(233,84,32,0.4);
+  color: #fff;
+}
+
+/* Integration — mid orange */
+.tier-api {
+  background: linear-gradient(135deg, rgba(233,84,32,0.82) 0%, rgba(195,65,19,0.9) 100%);
+  border: 1px solid rgba(233,84,32,0.5);
+  color: #fff;
+}
+
+/* Unit — solid brand orange */
+.tier-unit {
+  background: linear-gradient(135deg, #E95420 0%, #C34113 100%);
+  border: 1px solid #a83510;
+  color: #fff;
+}
+
+.pyramid-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.pyramid-tier strong {
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  flex: 1;
+  color: inherit;
+}
+
+.pyramid-label {
+  font-size: 0.72rem;
+  opacity: 0.88;
+  font-style: italic;
+  flex-shrink: 0;
+}
+
+.pyramid-count {
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: rgba(255,255,255,0.18);
+  border-radius: 20px;
+  padding: 2px 10px;
+  flex-shrink: 0;
+  letter-spacing: 0.03em;
+}
+
+/* Legend */
+.pyramid-legend {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot-e2e  { background: rgba(233,84,32,0.6); }
+.dot-unit { background: #E95420; }
+
+/* Dark mode adjustments */
+html.dark .pyramid-tier {
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+html.dark .tier-e2e {
+  background: linear-gradient(135deg, rgba(233,84,32,0.5) 0%, rgba(195,65,19,0.65) 100%);
+}
+html.dark .tier-api {
+  background: linear-gradient(135deg, rgba(233,84,32,0.7) 0%, rgba(195,65,19,0.82) 100%);
+}
+html.dark .tier-unit {
+  background: linear-gradient(135deg, #E95420 0%, #C34113 100%);
+}

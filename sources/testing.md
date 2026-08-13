@@ -2,15 +2,31 @@
 
 ## Test Pyramid
 
-```
-         ┌──────────┐
-         │   E2E    │  (Playwright / Cypress)
-         ├──────────┤
-         │   API    │  (Integration Tests)
-         ├──────────┤
-         │ Unit     │  (Jest + Pytest)
-         └──────────┘
-```
+<div class="test-pyramid-wrapper">
+  <div class="pyramid-tier tier-e2e">
+    <span class="pyramid-icon">🎭</span>
+    <strong>E2E Tests</strong>
+    <span class="pyramid-label">Playwright / Cypress</span>
+    <span class="pyramid-count">~10%</span>
+  </div>
+  <div class="pyramid-tier tier-api">
+    <span class="pyramid-icon">🔗</span>
+    <strong>Integration Tests</strong>
+    <span class="pyramid-label">Supertest / Pytest</span>
+    <span class="pyramid-count">~30%</span>
+  </div>
+  <div class="pyramid-tier tier-unit">
+    <span class="pyramid-icon">⚡</span>
+    <strong>Unit Tests</strong>
+    <span class="pyramid-label">Jest + Pytest</span>
+    <span class="pyramid-count">~60%</span>
+  </div>
+  <div class="pyramid-legend">
+    <span class="legend-item"><span class="legend-dot dot-e2e"></span>Slow · Expensive · High confidence</span>
+    <span class="legend-item"><span class="legend-dot dot-unit"></span>Fast · Cheap · Isolated</span>
+  </div>
+</div>
+
 
 ## Unit Tests
 
