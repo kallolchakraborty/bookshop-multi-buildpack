@@ -238,14 +238,16 @@
     if (!hash) return null;
     var base = hash.split('?')[0].split('#')[1];
     if (!base) return null;
-    // Extract base page route slug (e.g., #architecture from #architecture or #architecture-main-architecture)
-    var routeMap = window.__ROUTE_MAP || {};
-    if (routeMap['#' + base]) return '#' + base;
-    // Try matching prefix if heading sub-id is attached
-    var keys = Object.keys(routeMap);
+    var map = window.__ROUTE_MAP || routeMap || {};
+    if (map['#' + base]) return '#' + base;
+    // Check if the hash is a sub-section anchor like #file-structure-bookshop-application-directory-tree
+    var keys = Object.keys(map);
     for (var i = 0; i < keys.length; i++) {
       var k = keys[i].replace('#', '');
-      if (base.indexOf(k) === 0) return keys[i];
+      // Match exact prefix followed by hyphen or end of string
+      if (base === k || base.indexOf(k + '-') === 0) {
+        return keys[i];
+      }
     }
     return '#' + base;
   }
