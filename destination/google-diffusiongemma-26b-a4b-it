@@ -1,0 +1,11 @@
+# SAP BTP Destination Configuration File for google-diffusiongemma-26b-a4b-it
+# Import this file into SAP BTP Cockpit -> Connectivity -> Destinations
+Name=google-diffusiongemma-26b-a4b-it
+Type=HTTP
+URL=https\://integrate.api.nvidia.com/v1
+Authentication=NoAuthentication
+ProxyType=Internet
+Description=NVIDIA AI Foundation API for Google DiffusionGemma 26B LLM
+URL.headers.Authorization=Bearer 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
+APIKeyHeaderName=Authorization
+APIKey=Bearer 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

@@ -4,6 +4,9 @@
   function getTheme() {
     var t = localStorage.getItem(key);
     if (t === 'dark' || t === 'light') return t;
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
     return 'light';
   }
 

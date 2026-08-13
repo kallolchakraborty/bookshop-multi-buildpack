@@ -1,0 +1,12 @@
+# SAP BTP Destination Configuration File for z-ai-glm-5.2
+# Import this file into SAP BTP Cockpit -> Connectivity -> Destinations
+Name=z-ai-glm-5.2
+Type=HTTP
+URL=https\://integrate.api.nvidia.com/v1
+Authentication=NoAuthentication
+ProxyType=Internet
+Description=NVIDIA AI Foundation API for Z-AI GLM 5.2 LLM Model
+URL.headers.Authorization=Bearer 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
+APIKeyHeaderName=Authorization
+APIKey=Bearer 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
+Model=z-ai/glm-5.2

@@ -4,214 +4,108 @@
 
 In SAP BTP, **destinations** are configuration objects that define how applications connect to external systems or services. They centralize connection details (URL, authentication, proxy) so applications don't hardcode them.
 
-## Why Destinations Matter for bookshop-multi-buildpack
+## BTP Cockpit Auto-Discovery Engine for AI Models
 
-The application uses destinations to connect to:
-1. **Python backend** (local or remote)
-2. **AI Core service** (GenAI/HuggingFace models)
-3. **External APIs** (payment gateways, email services)
+The application uses `@sap-cloud-sdk/connectivity` in [`srv/ai-destination.js`](file:///Users/kallolchakraborty/Downloads/BookShop-Multibuildpack/bookshop-multi-buildpack/srv/ai-destination.js) to dynamically discover and auto-select bound Destinations from SAP BTP Cockpit without hardcoded API keys or secret URLs.
 
-## Creating Destinations via BTP Cockpit
+## The 4 BTP Cockpit Model Destinations & Priority Order
 
-### Step 1: Navigate to Destinations
+| Priority Rank | BTP Cockpit Destination Name | Target Model ID | Role in Failover Cascade |
+|---------------|------------------------------|-----------------|--------------------------|
+| **Priority 1 (Primary)** | `google-diffusiongemma-26b-a4b-it` | `google/diffusiongemma-26b-a4b-it` | Primary Model (First Choice) |
+| **Priority 2 (P2)** | `google-gemma-4-31b-it` | `google/gemma-4-31b-it` | Secondary Model (P2) |
+| **Priority 3** | `z-ai-glm-5-2` | `z-ai/glm-5.2` | Tertiary Model |
+| **Priority 4 (Fallback)** | `mistralai-mistral-nemotron` | `mistralai/mistral-nemotron` | Designated Fallback Model |
 
-1. Log into SAP BTP Cockpit
-2. Select your subaccount
-3. Go to **Connectivity → Destinations**
-4. Click **New Destination**
+---
 
-### Step 2: Create Python Backend Destination
+## Destination Export Configurations
 
-| Field | Value | Notes |
-|-------|-------|-------|
-| **Name** | `python-service` | Used in code as destination name |
-| **Type** | `HTTP` | Standard HTTP destination |
-| **URL** | `http://localhost:5000` | Local proxy or actual URL |
-| **Proxy Type** | `None` | Internal service |
-| **Authentication** | `NoAuthentication` | Internal service |
-| **Additional Properties** | `WebIDEEnabled=true` | Enable for development |
+Export configuration files are stored under `destination/`:
 
-### Step 3: Create AI Core Destination
-
-| Field | Value | Notes |
-|-------|-------|-------|
-| **Name** | `ai-core-service` | GenAI service |
-| **Type** | `HTTP` | HTTPS endpoint |
-| **URL** | `https://api.ai.core.sap/v2` | AI Core API |
-| **Proxy Type** | `Internet` | Public internet |
-| **Authentication** | `OAuth2UserTokenExchange` | Token exchange auth |
-| **Scope** | `bookshop-multi-buildpack.bookshop-ai` | Required scope |
-| **HTML5.DynamicDestination** | `true` | Enable for HTML5 apps |
-
-## Creating Destinations via BTP CLI
-
-```bash
-# Login to BTP
-btp login --url https://cpcli.cf.sap.hana.ondemand.com --subaccount <subaccount-id>
-
-# List destination instances
-btp get destinations/instance-key
-
-# Create destination
-btp create destinations/config \
-  --name python-service \
-  --host localhost \
-  --path / \
-  --destination-type HTTP \
-  --proxy-type None \
-  --authentication NoAuthentication \
-  --user-token-service-url https://your-xsuaa.authentication.sap.hana.ondemand.com
+### 1. `google-diffusiongemma-26b-a4b-it`
+```ini
+Name=google-diffusiongemma-26b-a4b-it
+Type=HTTP
+URL=https://integrate.api.nvidia.com/v1
+Authentication=NoAuthentication
+ProxyType=Internet
+Description=Google DiffusionGemma 26B Instruct Model
+URL.headers.Authorization=Bearer nvapi-***
+Model=google/diffusiongemma-26b-a4b-it
 ```
 
-## Using Destinations in Code
+### 2. `google-gemma-4-31b-it` (P2)
+```ini
+Name=google-gemma-4-31b-it
+Type=HTTP
+URL=https://integrate.api.nvidia.com/v1
+Authentication=NoAuthentication
+ProxyType=Internet
+Description=NVIDIA AI Foundation API for Google Gemma 4 31B Instruct LLM
+URL.headers.Authorization=Bearer nvapi-***
+Model=google/gemma-4-31b-it
+```
+
+### 3. `z-ai-glm-5-2`
+```ini
+Name=z-ai-glm-5-2
+Type=HTTP
+URL=https://integrate.api.nvidia.com/v1
+Authentication=NoAuthentication
+ProxyType=Internet
+Description=Z-AI GLM 5.2 LLM Model
+URL.headers.Authorization=Bearer nvapi-***
+Model=z-ai/glm-5.2
+```
+
+### 4. `mistralai-mistral-nemotron` (Fallback)
+```ini
+Name=mistralai-mistral-nemotron
+Type=HTTP
+URL=https://integrate.api.nvidia.com/v1
+Authentication=NoAuthentication
+ProxyType=Internet
+Description=Mistral AI Nemotron LLM Model
+URL.headers.Authorization=Bearer nvapi-***
+Model=mistralai/mistral-nemotron
+```
+
+---
+
+## Dynamic Auto-Selection Code Implementation
 
 ```javascript
-// src/services/destination-service.js
-const { executeHttpRequest } = require('@sap-cloud-sdk/connectivity');
+// srv/ai-destination.js
+const { getDestination } = require('@sap-cloud-sdk/connectivity')
 
-class DestinationService {
-  async getDestination(name) {
-    return await getDestination({ destinationName: name });
-  }
+const CANDIDATE_DESTINATIONS = [
+  process.env.AI_DESTINATION,
+  'google-diffusiongemma-26b-a4b-it',
+  'google-gemma-4-31b-it',
+  'z-ai-glm-5-2',
+  'z-ai-glm-5.2',
+  'mistralai-mistral-nemotron'
+].filter(Boolean)
 
-  async callDestination(name, options) {
-    const destination = await this.getDestination(name);
-    return await executeHttpRequest(destination, {
-      method: options.method || 'GET',
-      url: options.url,
-      headers: options.headers,
-      data: options.body
-    });
-  }
-}
+async function getAIDestination() {
+  if (cachedDestination) return cachedDestination
 
-// Usage for AI chat
-async function callAIChat(messages) {
-  const destination = await destinationService.getDestination('ai-core-service');
-  const response = await executeHttpRequest(destination, {
-    method: 'POST',
-    url: '/chat/completions',
-    headers: { 'Content-Type': 'application/json' },
-    data: { model: 'gpt-4', messages }
-  });
-  return response.data;
-}
-```
-
-## /ai/chat Endpoint with Authenticated Destinations
-
-### Question: Does /ai/chat support destinations with authentication?
-
-**Answer: YES, fully supported.**
-
-The `/ai/chat` endpoint supports multiple authentication types for destinations:
-
-#### Supported Authentication Types
-
-| Authentication | Use Case | Configuration |
-|----------------|----------|---------------|
-| **OAuth2UserTokenExchange** | User-context AI calls | Recommended for AI Core |
-| **OAuth2ClientCredentials** | Service-to-service | For automated AI workflows |
-| **BasicAuthentication** | Simple API auth | Legacy systems |
-| **PrincipalPropagation** | End-to-end identity | Multi-tier architectures |
-
-#### OAuth2UserTokenExchange Example
-
-```json
-{
-  "name": "ai-core-service",
-  "type": "HTTP",
-  "url": "https://api.ai.core.sap/v2",
-  "proxyType": "Internet",
-  "authentication": "OAuth2UserTokenExchange",
-  "scope": "$XSAPPNAME.bookshop-ai",
-  "tokenServiceURL": "https://your-xsuaa.authentication.sap.hana.ondemand.com",
-  "tokenServiceUser": "bookshop-multi-buildpack!t1234",
-  "clientId": "sb-bookshop-multi-buildpack!t1234",
-  "userId": "<current-user-jwt-sub>",
-  "WebIDEEnabled": true
-}
-```
-
-#### Code Implementation
-
-```javascript
-// src/routes/ai.js
-const { executeHttpRequest } = require('@sap-cloud-sdk/connectivity');
-
-async function chatWithAI(req, res) {
-  try {
-    const destination = await getDestination({ 
-      destinationName: 'ai-core-service' 
-    });
-    
-    const response = await executeHttpRequest(destination, {
-      method: 'POST',
-      url: '/openai/deployments/gpt-4/chat/completions',
-      headers: {
-        'Content-Type': 'application/json',
-        'api-key': req.authInfo.getAttr('api-key') // if needed
-      },
-      data: {
-        messages: req.body.messages,
-        temperature: req.body.temperature || 0.7,
-        max_tokens: req.body.max_tokens || 500
+  for (const name of CANDIDATE_DESTINATIONS) {
+    try {
+      const dest = await getDestination({ destinationName: name })
+      if (dest?.url) {
+        cachedDestination = {
+          baseUrl: dest.url,
+          apiKey: dest.authHeaders?.apikey || dest.originalProperties?.APIKey || '',
+          model: dest.originalProperties?.Model || '',
+          destinationName: name
+        }
+        return cachedDestination
       }
-    });
-    
-    res.json(response.data);
-  } catch (error) {
-    console.error('AI chat error:', error);
-    res.status(500).json({ error: 'AI service unavailable' });
-  }
-}
-```
-
-## Destination Validation
-
-```javascript
-// src/middleware/validate-destination.js
-async function validateDestination(destinationName) {
-  try {
-    const destination = await getDestination({ destinationName });
-    if (!destination) {
-      throw new Error(`Destination ${destinationName} not found`);
+    } catch {
+      // Candidate not bound in BTP Cockpit, check next
     }
-    
-    // Verify authentication configuration
-    const auth = destination.getAuthentication();
-    if (!auth && destination.authentication !== 'NoAuthentication') {
-      throw new Error(`Destination ${destinationName} missing authentication`);
-    }
-    
-    return destination;
-  } catch (error) {
-    console.error(`Destination validation failed: ${error.message}`);
-    throw error;
   }
-}
-```
-
-## Local Destination Mock
-
-For local development without BTP services:
-
-```javascript
-// src/config/destinations.js
-const mockDestinations = {
-  'python-service': {
-    url: 'http://localhost:5000',
-    authentication: 'NoAuthentication'
-  },
-  'ai-core-service': {
-    url: 'http://localhost:8000',
-    authentication: 'BasicAuthentication',
-    username: 'mock-user',
-    password: 'mock-password'
-  }
-};
-
-function getLocalDestination(name) {
-  return mockDestinations[name] || null;
 }
 ```

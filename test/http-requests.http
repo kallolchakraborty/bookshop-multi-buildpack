@@ -1,54 +1,98 @@
-#### GET requests ####
+#### SAP BTP Bookshop & AI Service REST HTTP Test Suite ####
+@baseUrl = http://localhost:4004
 
-### Get all books
-GET http://localhost:4004/browse/Book
+### 1. Health & Readiness Probes
+GET {{baseUrl}}/healthz
 Accept: application/json
 
-### Get a single book
-GET http://localhost:4004/browse/Book(201)
+###
+GET {{baseUrl}}/readyz
+Accept: application/json
+
+
+### 2. Catalog & Discount Endpoints
+### Get all books
+GET {{baseUrl}}/browse/Book
+Accept: application/json
+
+### Get a single book (ID 201)
+GET {{baseUrl}}/browse/Book(201)
 Accept: application/json
 
 ### Get all authors
-GET http://localhost:4004/browse/Author
+GET {{baseUrl}}/browse/Author
 Accept: application/json
 
 ### Get all orders
-GET http://localhost:4004/browse/Order
+GET {{baseUrl}}/browse/Order
 Accept: application/json
 
-### Call the Python-backed discount function
-GET http://localhost:4004/browse/discount(title='The%20Bestseller')
+### Call Python-backed discount function
+GET {{baseUrl}}/browse/discount(title='The%20Bestseller')
 Accept: application/json
 
-#### POST requests ####
 
-### Create a new author
-POST http://localhost:4004/browse/Author
+### 3. AI Service Endpoints (/ai)
+
+### 3a. Single-turn AI Ask - Mistral Nemotron (BTP Destination: mistralai-mistral-nemotron)
+POST {{baseUrl}}/ai/ask
 Content-Type: application/json
 
 {
-  "ID": 900,
-  "name": "Kallol Test Author"
+  "prompt": "Recommend top 2 technology books and explain why.",
+  "model": "mistralai/mistral-nemotron"
 }
 
-### Create a new book (references the author above)
-POST http://localhost:4004/browse/Book
+### 3b. Single-turn AI Ask - Google DiffusionGemma 26B (BTP Destination: google-diffusiongemma-26b-a4b-it)
+POST {{baseUrl}}/ai/ask
 Content-Type: application/json
 
 {
-  "ID": 999,
-  "title": "Optimized Book",
-  "author_ID": 900,
-  "stock": 3,
-  "price": 25.00
+  "prompt": "What are the core concepts of software architecture?",
+  "model": "google/diffusiongemma-26b-a4b-it"
 }
 
-### Ask the Llama AI model through the BTP destination "meta-llama-3-3-70b-instruct"
-### Needs `npm run mock:ai` running locally (development profile), or the destination on BTP.
-POST http://localhost:4004/ai/ask
+### 3c. Single-turn AI Ask - Google Gemma 4 31B Instruct (BTP Destination: google-gemma-4-31b-it)
+POST {{baseUrl}}/ai/ask
 Content-Type: application/json
 
 {
-  "prompt": "Recommend two books and explain your choices.",
-  "model": "meta/llama-3.3-70b-instruct"
+  "prompt": "Explain the difference between microservices and monoliths.",
+  "model": "google/gemma-4-31b-it"
+}
+
+### 3d. Single-turn AI Ask - Z-AI GLM 5.2 (BTP Destination: z-ai-glm-5-2)
+POST {{baseUrl}}/ai/ask
+Content-Type: application/json
+
+{
+  "prompt": "Summarize the benefits of cloud native applications.",
+  "model": "z-ai/glm-5.2"
+}
+
+### 3e. SAP HANA Vector Engine RAG Search (/ai/ask_rag)
+POST {{baseUrl}}/ai/ask_rag
+Content-Type: application/json
+
+{
+  "prompt": "Which bestseller books are available in stock with fantasy themes?",
+  "model": "mistralai/mistral-nemotron"
+}
+
+### 3f. Stateful LangGraph Agentic Workflow (/ai/ask_agent)
+POST {{baseUrl}}/ai/ask_agent
+Content-Type: application/json
+
+{
+  "prompt": "What is the discounted price for classic books?",
+  "model": "google/diffusiongemma-26b-a4b-it"
+}
+
+### 3g. Real-Time Server-Sent Events (SSE) Streaming (/ai/ask/stream)
+POST {{baseUrl}}/ai/ask/stream
+Content-Type: application/json
+
+{
+  "prompt": "Provide a quick overview of cloud design patterns.",
+  "model": "z-ai/glm-5.2"
 }

@@ -1,173 +1,279 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 680" width="100%" height="auto">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" width="100%" height="auto">
   <defs>
-    <linearGradient id="grad-manifest" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#eff6ff" />
-      <stop offset="100%" stop-color="#dbeafe" />
+    <linearGradient id="canvas-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#111827" />
     </linearGradient>
-    <linearGradient id="grad-deploy" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fff7ed" />
-      <stop offset="100%" stop-color="#ffedd5" />
+    <linearGradient id="bp-manifest" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
     </linearGradient>
-    <linearGradient id="grad-staging" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f0fdf4" />
-      <stop offset="100%" stop-color="#dcfce7" />
+    <linearGradient id="bp-py" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a" />
+      <stop offset="100%" stop-color="#172554" />
     </linearGradient>
-    <linearGradient id="grad-droplet" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f3e5f5" />
-      <stop offset="100%" stop-color="#e1bee7" />
+    <linearGradient id="bp-node" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f766e" />
+      <stop offset="100%" stop-color="#042f2e" />
     </linearGradient>
-    <linearGradient id="grad-running" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fdf2f8" />
-      <stop offset="100%" stop-color="#fce7f3" />
+    <linearGradient id="bp-droplet" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4c1d95" />
+      <stop offset="100%" stop-color="#2e1065" />
+    </linearGradient>
+    <linearGradient id="bp-run" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#065f46" />
+      <stop offset="100%" stop-color="#022c22" />
     </linearGradient>
 
-    <filter id="shadow" x="-8%" y="-8%" width="116%" height="116%">
-      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="rgba(15, 23, 42, 0.08)" />
+    <filter id="soft-shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.5" />
     </filter>
 
     <marker id="arr-blue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path d="M1,1 L7,4 L1,7 Z" fill="#2563eb" />
+      <path d="M1,1 L7,4 L1,7 Z" fill="#38bdf8" />
     </marker>
-    <marker id="arr-amber" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path d="M1,1 L7,4 L1,7 Z" fill="#d97706" />
+    <marker id="arr-teal" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M1,1 L7,4 L1,7 Z" fill="#2dd4bf" />
     </marker>
     <marker id="arr-purple" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path d="M1,1 L7,4 L1,7 Z" fill="#9333ea" />
+      <path d="M1,1 L7,4 L1,7 Z" fill="#c084fc" />
     </marker>
-    <marker id="arr-pink" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path d="M1,1 L7,4 L1,7 Z" fill="#db2777" />
-    </marker>
-    <marker id="arr-green" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path d="M1,1 L7,4 L1,7 Z" fill="#16a34a" />
+    <marker id="arr-emerald" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M1,1 L7,4 L1,7 Z" fill="#34d399" />
     </marker>
 
     <style>
-      .node-card { rx: 12; ry: 12; stroke-width: 1.5; filter: url(#shadow); }
-      .txt-hdr { font-family: Ubuntu, system-ui, sans-serif; font-size: 14px; font-weight: 700; fill: #0f172a; }
-      .txt-lbl { font-family: Ubuntu, system-ui, sans-serif; font-size: 11px; font-weight: 500; fill: #334155; }
-      .txt-sub { font-family: 'SF Mono', Consolas, monospace; font-size: 10px; fill: #64748b; }
-      .flow-path { stroke-dasharray: 6,4; animation: dash 1.6s linear infinite; }
+      .txt-title { font-family: 'Ubuntu', sans-serif; font-size: 22px; font-weight: 700; fill: #ffffff; }
+      .txt-sub { font-family: 'Ubuntu', sans-serif; font-size: 13px; fill: #94a3b8; }
+      .txt-hdr { font-family: 'Ubuntu', sans-serif; font-size: 14px; font-weight: 700; fill: #ffffff; }
+      .txt-body { font-family: 'Ubuntu', sans-serif; font-size: 12px; fill: #e2e8f0; }
+      .txt-dim { font-family: 'Ubuntu', sans-serif; font-size: 11px; fill: #94a3b8; }
+      .txt-code { font-family: 'Ubuntu Mono', monospace; font-size: 11px; fill: #38bdf8; }
+      .flow-line { stroke-dasharray: 6,4; animation: dash 1.5s linear infinite; }
       @keyframes dash { to { stroke-dashoffset: -20; } }
-      .chip { rx: 4; ry: 4; fill: #ffffff; stroke-width: 1; }
-      .chip-txt { font-family: Ubuntu, system-ui, sans-serif; font-size: 10px; font-weight: 600; }
     </style>
   </defs>
 
-  <!-- Background -->
-  <rect width="1100" height="680" fill="#ffffff" rx="16" />
+  <!-- Background Base Container -->
+  <rect width="1280" height="840" fill="url(#canvas-bg)" rx="18" stroke="#334155" stroke-width="1.5" />
 
-  <!-- Title -->
-  <text x="550" y="36" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="19" font-weight="700" fill="#0f172a">Cloud Foundry Multi-Buildpack Lifecycle</text>
-  <text x="550" y="56" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="12" fill="#64748b">Sequential Staging • Dual Runtime Provisioning • Container Orchestration</text>
+  <!-- Diagram Title Header -->
+  <text x="640" y="42" text-anchor="middle" class="txt-title">SAP BTP Cloud Foundry Multi-Buildpack Lifecycle</text>
+  <text x="640" y="65" text-anchor="middle" class="txt-sub">From manifest.yml Multi-Buildpack Declaration ➔ Staging Chain ➔ Droplet Compilation ➔ Unified Runtime</text>
 
-  <!-- Stage Cards Top Row -->
-  <!-- 1. manifest.yml -->
-  <g transform="translate(30, 85)">
-    <rect width="180" height="120" fill="url(#grad-manifest)" stroke="#bfdbfe" class="node-card" />
-    <text x="90" y="30" text-anchor="middle" class="txt-hdr">1. manifest.yml</text>
-    <text x="90" y="50" text-anchor="middle" class="txt-lbl">Buildpack Spec</text>
-    <rect x="15" y="66" width="150" height="24" rx="6" fill="#ffffff" stroke="#93c5fd" />
-    <text x="90" y="82" text-anchor="middle" class="txt-sub">1. python_buildpack</text>
-    <rect x="15" y="94" width="150" height="20" rx="6" fill="#ffffff" stroke="#93c5fd" />
-    <text x="90" y="108" text-anchor="middle" class="txt-sub">2. nodejs_buildpack</text>
-  </g>
+  <!-- 1. Manifest Declaration (w: 220) -->
+  <g transform="translate(30, 95)" filter="url(#soft-shadow)">
+    <rect width="220" height="715" fill="url(#bp-manifest)" stroke="#475569" stroke-width="1.5" rx="14" />
+    <rect x="15" y="18" width="190" height="34" rx="8" fill="#0f172a" stroke="#64748b" />
+    <text x="110" y="40" text-anchor="middle" class="txt-hdr">1. manifest.yml</text>
 
-  <!-- 2. CF Staging -->
-  <g transform="translate(250, 85)">
-    <rect width="180" height="120" fill="url(#grad-deploy)" stroke="#fed7aa" class="node-card" />
-    <text x="90" y="30" text-anchor="middle" class="txt-hdr">2. CF Staging Engine</text>
-    <text x="90" y="50" text-anchor="middle" class="txt-lbl">Diego Cell Stager</text>
-    <rect x="15" y="66" width="150" height="24" rx="6" fill="#ffffff" stroke="#fdba74" />
-    <text x="90" y="82" text-anchor="middle" class="txt-sub">Uploads Source Artifact</text>
-    <rect x="15" y="94" width="150" height="20" rx="6" fill="#ffffff" stroke="#fdba74" />
-    <text x="90" y="108" text-anchor="middle" class="txt-sub">Resolves Buildpacks</text>
-  </g>
-
-  <!-- 3. Dual Staging -->
-  <g transform="translate(470, 85)">
-    <rect width="180" height="120" fill="url(#grad-staging)" stroke="#86efac" class="node-card" />
-    <text x="90" y="30" text-anchor="middle" class="txt-hdr">3. Sequential Build</text>
-    <text x="90" y="50" text-anchor="middle" class="txt-lbl">Provision Runtimes</text>
-    <rect x="15" y="66" width="150" height="24" rx="6" fill="#ffffff" stroke="#86efac" />
-    <text x="90" y="82" text-anchor="middle" class="txt-sub">pip install requirements</text>
-    <rect x="15" y="94" width="150" height="20" rx="6" fill="#ffffff" stroke="#86efac" />
-    <text x="90" y="108" text-anchor="middle" class="txt-sub">npm install packages</text>
-  </g>
-
-  <!-- 4. Droplet -->
-  <g transform="translate(690, 85)">
-    <rect width="180" height="120" fill="url(#grad-droplet)" stroke="#d8b4fe" class="node-card" />
-    <text x="90" y="30" text-anchor="middle" class="txt-hdr">4. Droplet Ready</text>
-    <text x="90" y="50" text-anchor="middle" class="txt-lbl">Container Layer</text>
-    <rect x="15" y="66" width="150" height="24" rx="6" fill="#ffffff" stroke="#c084fc" />
-    <text x="90" y="82" text-anchor="middle" class="txt-sub">Python 3 + Node.js LTS</text>
-    <rect x="15" y="94" width="150" height="20" rx="6" fill="#ffffff" stroke="#c084fc" />
-    <text x="90" y="108" text-anchor="middle" class="txt-sub">Source + server.js</text>
-  </g>
-
-  <!-- 5. Running Container -->
-  <g transform="translate(900, 85)">
-    <rect width="170" height="120" fill="url(#grad-running)" stroke="#f472b6" class="node-card" />
-    <text x="85" y="30" text-anchor="middle" class="txt-hdr">5. App Running</text>
-    <text x="85" y="50" text-anchor="middle" class="txt-lbl">Live Runtimes</text>
-    <rect x="15" y="66" width="140" height="24" rx="6" fill="#ffffff" stroke="#f472b6" />
-    <text x="85" y="82" text-anchor="middle" class="txt-sub">npm start (server.js)</text>
-    <rect x="15" y="94" width="140" height="20" rx="6" fill="#ffffff" stroke="#f472b6" />
-    <text x="85" y="108" text-anchor="middle" class="txt-sub">Spawns python worker</text>
-  </g>
-
-  <!-- Connectors Between Top Cards (Y=145) -->
-  <path d="M 210,145 L 250,145" stroke="#2563eb" stroke-width="2" class="flow-path" marker-end="url(#arr-blue)" />
-  <path d="M 430,145 L 470,145" stroke="#d97706" stroke-width="2" class="flow-path" marker-end="url(#arr-amber)" />
-  <path d="M 650,145 L 690,145" stroke="#16a34a" stroke-width="2" class="flow-path" marker-end="url(#arr-green)" />
-  <path d="M 870,145 L 900,145" stroke="#9333ea" stroke-width="2" class="flow-path" marker-end="url(#arr-purple)" />
-
-  <!-- Detailed Table (Bottom) -->
-  <g transform="translate(30, 250)">
-    <rect width="1040" height="400" fill="#f8fafc" stroke="#e2e8f0" rx="14" filter="url(#shadow)" />
-    <rect width="1040" height="42" fill="#f1f5f9" rx="14" />
-    <text x="520" y="26" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="14" font-weight="700" fill="#0f172a">Step-by-Step Staging &amp; Orchestration Matrix</text>
-
-    <!-- Row 1 -->
-    <g transform="translate(40, 60)">
-      <circle cx="15" cy="15" r="12" fill="#2563eb" />
-      <text x="15" y="19" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">1</text>
-      <text x="40" y="19" class="txt-lbl"><tspan font-weight="700" fill="#0f172a">Manifest Configuration:</tspan> Cloud Foundry reads manifest.yml containing the buildpacks list array.</text>
+    <g transform="translate(15, 68)">
+      <rect width="190" height="190" rx="8" fill="#0f172a" stroke="#334155" />
+      <text x="15" y="26" class="txt-hdr" fill="#38bdf8">Buildpack Order</text>
+      <text x="15" y="52" class="txt-sub">buildpacks:</text>
+      <text x="15" y="74" class="txt-code">- python_buildpack</text>
+      <text x="15" y="96" class="txt-code">- nodejs_buildpack</text>
+      <text x="15" y="124" class="txt-sub">command: npm start</text>
+      <text x="15" y="146" class="txt-sub">memory: 512M</text>
+      <text x="15" y="168" class="txt-sub">disk: 1G</text>
     </g>
 
-    <!-- Row 2 -->
-    <g transform="translate(40, 110)">
-      <circle cx="15" cy="15" r="12" fill="#d97706" />
-      <text x="15" y="19" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">2</text>
-      <text x="40" y="19" class="txt-lbl"><tspan font-weight="700" fill="#0f172a">Source Upload:</tspan> cf push packages application source code, package.json, and python scripts.</text>
+    <g transform="translate(15, 275)">
+      <rect width="190" height="210" rx="8" fill="#0f172a" stroke="#334155" />
+      <text x="15" y="26" class="txt-hdr" fill="#a7f3d0">Bound Services</text>
+      <text x="15" y="52" class="txt-sub">services:</text>
+      <text x="15" y="74" class="txt-code">- bookshop-db</text>
+      <text x="15" y="96" class="txt-code">- destination-svc</text>
+      <text x="15" y="118" class="txt-code">- redis-instance</text>
+      <text x="15" y="140" class="txt-code">- xsuaa-auth</text>
+      <text x="15" y="162" class="txt-code">- app-logging</text>
+      <text x="15" y="190" class="txt-dim">Shared via VCAP</text>
     </g>
 
-    <!-- Row 3 -->
-    <g transform="translate(40, 160)">
-      <circle cx="15" cy="15" r="12" fill="#16a34a" />
-      <text x="15" y="19" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">3</text>
-      <text x="40" y="19" class="txt-lbl"><tspan font-weight="700" fill="#0f172a">Python Buildpack Phase:</tspan> Installs Python interpreter and installs dependencies from requirements.txt.</text>
-    </g>
-
-    <!-- Row 4 -->
-    <g transform="translate(40, 210)">
-      <circle cx="15" cy="15" r="12" fill="#16a34a" />
-      <text x="15" y="19" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">4</text>
-      <text x="40" y="19" class="txt-lbl"><tspan font-weight="700" fill="#0f172a">Node.js Buildpack Phase:</tspan> Installs Node.js runtime and executes npm install for @sap/cds packages.</text>
-    </g>
-
-    <!-- Row 5 -->
-    <g transform="translate(40, 260)">
-      <circle cx="15" cy="15" r="12" fill="#9333ea" />
-      <text x="15" y="19" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">5</text>
-      <text x="40" y="19" class="txt-lbl"><tspan font-weight="700" fill="#0f172a">Droplet Assembly:</tspan> Staging engine bundles both runtime layers into a unified container image.</text>
-    </g>
-
-    <!-- Row 6 -->
-    <g transform="translate(40, 310)">
-      <circle cx="15" cy="15" r="12" fill="#db2777" />
-      <text x="15" y="19" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">6</text>
-      <text x="40" y="19" class="txt-lbl"><tspan font-weight="700" fill="#0f172a">Runtime Orchestration:</tspan> Container launches npm start -> srv/python.js lazily spawns python worker.</text>
+    <g transform="translate(15, 502)">
+      <rect width="190" height="190" rx="8" fill="#022c22" stroke="#059669" />
+      <text x="15" y="26" class="txt-hdr" fill="#6ee7b7">CLI Trigger</text>
+      <text x="15" y="54" class="txt-code">cf push</text>
+      <text x="15" y="80" class="txt-dim">Uploads 236 KB package</text>
+      <text x="15" y="102" class="txt-dim">Applies manifest rules</text>
+      <text x="15" y="124" class="txt-dim">Creates Diego container</text>
+      <text x="15" y="146" class="txt-dim">Initiates staging chain</text>
+      <text x="15" y="170" class="txt-code">Stack: cflinuxfs4</text>
     </g>
   </g>
+
+  <!-- 2. Python Buildpack (w: 225) -->
+  <g transform="translate(280, 95)" filter="url(#soft-shadow)">
+    <rect width="225" height="715" fill="url(#bp-py)" stroke="#60a5fa" stroke-width="1.5" rx="14" />
+    <rect x="15" y="18" width="195" height="34" rx="8" fill="#0f172a" stroke="#38bdf8" />
+    <text x="112" y="40" text-anchor="middle" class="txt-hdr" fill="#bae6fd">2. python_buildpack</text>
+
+    <g transform="translate(15, 68)">
+      <rect width="195" height="150" rx="8" fill="#0f172a" stroke="#38bdf8" />
+      <text x="15" y="24" class="txt-hdr" fill="#67e8f9">Python Supply</text>
+      <text x="15" y="46" class="txt-dim">• Supplies Python 3.10</text>
+      <text x="15" y="66" class="txt-dim">• Location: /deps/0/python</text>
+      <text x="15" y="86" class="txt-dim">• Runs pip install from</text>
+      <text x="15" y="106" class="txt-code">python/requirements.txt</text>
+      <text x="15" y="130" class="txt-dim">Pip version 23.0.1</text>
+    </g>
+
+    <g transform="translate(15, 235)">
+      <rect width="195" height="250" rx="8" fill="#0f172a" stroke="#38bdf8" />
+      <text x="15" y="24" class="txt-hdr" fill="#a7f3d0">Installed AI Packages</text>
+      <text x="15" y="48" class="txt-dim">• langchain &gt;= 0.3.0</text>
+      <text x="15" y="70" class="txt-dim">• langgraph &gt;= 0.2.0</text>
+      <text x="15" y="92" class="txt-dim">• langchain-openai</text>
+      <text x="15" y="114" class="txt-dim">• hdbcli (HANA Vector)</text>
+      <text x="15" y="136" class="txt-dim">• redis (Cache Client)</text>
+      <text x="15" y="158" class="txt-dim">• langsmith (Tracing)</text>
+      <text x="15" y="180" class="txt-dim">• httpx (SSE Stream)</text>
+      <text x="15" y="206" class="txt-code">All wheels cached</text>
+      <text x="15" y="226" class="txt-dim">in CF build cache</text>
+    </g>
+
+    <g transform="translate(15, 502)">
+      <rect width="195" height="190" rx="8" fill="#0f172a" stroke="#38bdf8" />
+      <text x="15" y="24" class="txt-hdr" fill="#67e8f9">Staging Output</text>
+      <text x="15" y="48" class="txt-dim">• Python bins to PATH</text>
+      <text x="15" y="68" class="txt-dim">• Site-packages linked</text>
+      <text x="15" y="88" class="txt-dim">• Passes control to next</text>
+      <text x="15" y="108" class="txt-dim">buildpack in chain</text>
+      <text x="15" y="136" class="txt-code">Exit status 0</text>
+      <text x="15" y="160" class="txt-dim">Duration: ~4s</text>
+    </g>
+  </g>
+
+  <!-- 3. Node.js Buildpack (w: 225) -->
+  <g transform="translate(530, 95)" filter="url(#soft-shadow)">
+    <rect width="225" height="715" fill="url(#bp-node)" stroke="#2dd4bf" stroke-width="1.5" rx="14" />
+    <rect x="15" y="18" width="195" height="34" rx="8" fill="#042f2e" stroke="#14b8a6" />
+    <text x="112" y="40" text-anchor="middle" class="txt-hdr" fill="#99f6e4">3. nodejs_buildpack</text>
+
+    <g transform="translate(15, 68)">
+      <rect width="195" height="150" rx="8" fill="#042f2e" stroke="#2dd4bf" />
+      <text x="15" y="24" class="txt-hdr" fill="#5eead4">Node.js Supply</text>
+      <text x="15" y="46" class="txt-dim">• Installs Node.js 24</text>
+      <text x="15" y="66" class="txt-dim">• Installs npm 11 &amp; yarn</text>
+      <text x="15" y="86" class="txt-dim">• Location: /deps/1/node</text>
+      <text x="15" y="106" class="txt-code">npm install --prod</text>
+      <text x="15" y="130" class="txt-dim">added 151 packages</text>
+    </g>
+
+    <g transform="translate(15, 235)">
+      <rect width="195" height="250" rx="8" fill="#042f2e" stroke="#2dd4bf" />
+      <text x="15" y="24" class="txt-hdr" fill="#a7f3d0">Installed CAP Modules</text>
+      <text x="15" y="48" class="txt-dim">• @sap/cds ^10.0.5</text>
+      <text x="15" y="70" class="txt-dim">• @sap-cloud-sdk/conn</text>
+      <text x="15" y="92" class="txt-dim">• @sap-cloud-sdk/http</text>
+      <text x="15" y="114" class="txt-dim">• @sap-cloud-sdk/res</text>
+      <text x="15" y="136" class="txt-dim">• @cap-js/hana</text>
+      <text x="15" y="158" class="txt-dim">• express &amp; helmet</text>
+      <text x="15" y="180" class="txt-dim">• @sap/cds-dk</text>
+      <text x="15" y="206" class="txt-code">Prebuild detected</text>
+      <text x="15" y="226" class="txt-dim">Fast cache reuse</text>
+    </g>
+
+    <g transform="translate(15, 502)">
+      <rect width="195" height="190" rx="8" fill="#042f2e" stroke="#2dd4bf" />
+      <text x="15" y="24" class="txt-hdr" fill="#5eead4">Final Buildpack</text>
+      <text x="15" y="48" class="txt-dim">• Generates droplet start</text>
+      <text x="15" y="68" class="txt-dim">command invocation</text>
+      <text x="15" y="88" class="txt-dim">• NODE_ENV=production</text>
+      <text x="15" y="112" class="txt-code">Start command set</text>
+      <text x="15" y="136" class="txt-code">Exit status 0</text>
+      <text x="15" y="160" class="txt-dim">Duration: ~3s</text>
+    </g>
+  </g>
+
+  <!-- 4. Droplet Packaging (w: 225) -->
+  <g transform="translate(780, 95)" filter="url(#soft-shadow)">
+    <rect width="225" height="715" fill="url(#bp-droplet)" stroke="#c084fc" stroke-width="1.5" rx="14" />
+    <rect x="15" y="18" width="195" height="34" rx="8" fill="#2e1065" stroke="#a855f7" />
+    <text x="112" y="40" text-anchor="middle" class="txt-hdr" fill="#e9d5ff">4. Droplet Package</text>
+
+    <g transform="translate(15, 68)">
+      <rect width="195" height="150" rx="8" fill="#0f172a" stroke="#c084fc" />
+      <text x="15" y="24" class="txt-hdr" fill="#d8b4fe">Single Container</text>
+      <text x="15" y="46" class="txt-dim">• Droplet size: ~125 MB</text>
+      <text x="15" y="66" class="txt-dim">• Shared file system</text>
+      <text x="15" y="86" class="txt-dim">• Memory ceiling: 512 MB</text>
+      <text x="15" y="106" class="txt-dim">• Disk allocation: 1 GB</text>
+      <text x="15" y="130" class="txt-code">Uploaded to CF Blobstore</text>
+    </g>
+
+    <g transform="translate(15, 235)">
+      <rect width="195" height="250" rx="8" fill="#0f172a" stroke="#c084fc" />
+      <text x="15" y="24" class="txt-hdr" fill="#a7f3d0">Unified Environment</text>
+      <text x="15" y="48" class="txt-dim">PATH includes both:</text>
+      <text x="15" y="68" class="txt-code">/deps/0/python/bin</text>
+      <text x="15" y="88" class="txt-code">/deps/1/node/bin</text>
+      <text x="15" y="116" class="txt-dim">Environment Variables:</text>
+      <text x="15" y="136" class="txt-code">VCAP_SERVICES</text>
+      <text x="15" y="156" class="txt-code">VCAP_APPLICATION</text>
+      <text x="15" y="176" class="txt-code">PORT=8080</text>
+      <text x="15" y="206" class="txt-dim">Single Diego cell host</text>
+      <text x="15" y="226" class="txt-dim">Zero cross-network cost</text>
+    </g>
+
+    <g transform="translate(15, 502)">
+      <rect width="195" height="190" rx="8" fill="#0f172a" stroke="#c084fc" />
+      <text x="15" y="24" class="txt-hdr" fill="#d8b4fe">Staging Complete</text>
+      <text x="15" y="48" class="txt-dim">• Droplet stored</text>
+      <text x="15" y="68" class="txt-dim">• Cell container created</text>
+      <text x="15" y="88" class="txt-dim">• Security groups applied</text>
+      <text x="15" y="112" class="txt-code">Staging exit: 0</text>
+      <text x="15" y="136" class="txt-dim">Ready for boot</text>
+      <text x="15" y="160" class="txt-code">Status: STARTING</text>
+    </g>
+  </g>
+
+  <!-- 5. Running Container (w: 220) -->
+  <g transform="translate(1030, 95)" filter="url(#soft-shadow)">
+    <rect width="220" height="715" fill="url(#bp-run)" stroke="#34d399" stroke-width="1.5" rx="14" />
+    <rect x="15" y="18" width="190" height="34" rx="8" fill="#022c22" stroke="#10b981" />
+    <text x="110" y="40" text-anchor="middle" class="txt-hdr" fill="#a7f3d0">5. Running State</text>
+
+    <g transform="translate(15, 68)">
+      <rect width="190" height="150" rx="8" fill="#0f172a" stroke="#34d399" />
+      <text x="15" y="24" class="txt-hdr" fill="#a7f3d0">Boot Execution</text>
+      <text x="15" y="46" class="txt-code">npm start</text>
+      <text x="15" y="66" class="txt-dim">➔ cds-serve</text>
+      <text x="15" y="86" class="txt-dim">Node.js listens on 8080</text>
+      <text x="15" y="106" class="txt-dim">Python subprocess</text>
+      <text x="15" y="126" class="txt-dim">spawned lazily</text>
+    </g>
+
+    <g transform="translate(15, 235)">
+      <rect width="190" height="250" rx="8" fill="#0f172a" stroke="#34d399" />
+      <text x="15" y="24" class="txt-hdr" fill="#a7f3d0">Health &amp; Ready State</text>
+      <text x="15" y="48" class="txt-code">GET /healthz</text>
+      <text x="15" y="66" class="txt-dim">➔ {"status":"OK"}</text>
+      <text x="15" y="92" class="txt-code">GET /readyz</text>
+      <text x="15" y="110" class="txt-dim">➔ {"status":"READY",</text>
+      <text x="15" y="128" class="txt-dim">   "python":"OK"}</text>
+      <text x="15" y="154" class="txt-hdr">Memory Footprint</text>
+      <text x="15" y="174" class="txt-dim">~90 MB RAM used</text>
+      <text x="15" y="194" class="txt-dim">out of 512 MB limit</text>
+      <text x="15" y="218" class="txt-code">State: RUNNING (1/1)</text>
+    </g>
+
+    <g transform="translate(15, 502)">
+      <rect width="190" height="190" rx="8" fill="#0f172a" stroke="#34d399" />
+      <text x="15" y="24" class="txt-hdr" fill="#a7f3d0">4-Model Failover</text>
+      <text x="15" y="48" class="txt-dim">1. DiffusionGemma 26B</text>
+      <text x="15" y="68" class="txt-dim">2. Gemma 4 31B (P2)</text>
+      <text x="15" y="88" class="txt-dim">3. GLM 5.2</text>
+      <text x="15" y="108" class="txt-dim">4. Mistral (Fallback)</text>
+      <text x="15" y="136" class="txt-code">Routes Bound</text>
+      <text x="15" y="160" class="txt-dim">Ready for traffic</text>
+    </g>
+  </g>
+
+  <!-- Connectors -->
+  <path d="M 250,220 L 280,220" stroke="#38bdf8" stroke-width="2.5" class="flow-line" marker-end="url(#arr-blue)" />
+  <path d="M 505,220 L 530,220" stroke="#2dd4bf" stroke-width="2.5" class="flow-line" marker-end="url(#arr-teal)" />
+  <path d="M 755,220 L 780,220" stroke="#c084fc" stroke-width="2.5" class="flow-line" marker-end="url(#arr-purple)" />
+  <path d="M 1005,220 L 1030,220" stroke="#34d399" stroke-width="2.5" class="flow-line" marker-end="url(#arr-emerald)" />
+
 </svg>

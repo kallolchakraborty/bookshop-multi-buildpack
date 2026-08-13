@@ -1,0 +1,12 @@
+# SAP BTP Destination Configuration File for mistralai-mistral-nemotron
+# Import this file into SAP BTP Cockpit -> Connectivity -> Destinations
+Name=mistralai-mistral-nemotron
+Type=HTTP
+URL=https\://integrate.api.nvidia.com/v1
+Authentication=NoAuthentication
+ProxyType=Internet
+Description=NVIDIA AI Foundation API for MistralAI Mistral Nemotron LLM Model
+URL.headers.Authorization=Bearer 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
+APIKeyHeaderName=Authorization
+APIKey=Bearer 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
+Model=mistralai/mistral-nemotron

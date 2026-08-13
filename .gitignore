@@ -5,17 +5,16 @@ gen/
 *.sqlite-shm
 *.sqlite-wal
 .env
-.env.example
-
-*.log
-.vscode/
-.idea/
-dist/
 
 # Credentials / bindings / local overrides - never commit
 .cdsrc-private.json
 .deploy-vcap.json
 *.env.local
-
-# Documentation build artifacts
+.vscode/
+*.log
 .DS_Store
+__pycache__/
+*.pyc
+venv/
+python/venv/
+python/**/__pycache__/

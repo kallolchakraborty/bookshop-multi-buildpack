@@ -1,16 +1,82 @@
-// Custom HTTP routes that must be registered at bootstrap time (before the
-// OData middleware serves the /ai service). Streaming chat is exposed here as
-// Server-Sent Events so clients can render the LLM's tokens as they are generated.
-//
-// Config: the app's cds server automatically loads srv/server.js.
+// Custom HTTP Bootstrap & Middleware for SAP CAP Server.
+// Implements:
+// 1. Sliding-Window Rate Limiting (15 req/min per IP) to prevent DoS & LLM API token exhaustion.
+// 2. HTTP Security Headers (CORS & Content Security Policy).
+// 3. Health & Readiness Probes (/healthz & /readyz) for Cloud Foundry process monitoring.
+// 4. Server-Sent Events (SSE) Streaming endpoint (/ai/ask/stream).
+
 const cds = require('@sap/cds')
 const { python } = require('./python')
 const { getAIDestination } = require('./ai-destination')
 
+// Simple sliding window rate limiter cache: { ip: [timestamp, ...] }
+const RATE_LIMIT_WINDOW_MS = 60 * 1000 // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 15
+const ipRequestCache = new Map()
+
+// Rate Limiting Middleware
+function applyRateLimiting(req, res) {
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown-client'
+  const now = Date.now()
+  
+  if (!ipRequestCache.has(ip)) {
+    ipRequestCache.set(ip, [])
+  }
+  
+  const timestamps = ipRequestCache.get(ip).filter(ts => now - ts < RATE_LIMIT_WINDOW_MS)
+  
+  if (timestamps.length >= MAX_REQUESTS_PER_WINDOW) {
+    res.setHeader('Retry-After', '60')
+    res.status(429).json({
+      error: 'Too Many Requests',
+      message: 'Rate limit exceeded (15 requests/minute). Please wait before retrying.'
+    })
+    return false
+  }
+  
+  timestamps.push(now)
+  ipRequestCache.set(ip, timestamps)
+  return true
+}
+
 cds.once('bootstrap', (app) => {
-  // POST /ai/ask/stream -> text/event-stream (SSE), one data: line per token.
+  
+  // Middleware: Security & Rate Limiting
+  app.use((req, res, next) => {
+    // Security Headers
+    res.setHeader('X-Content-Type-Options', 'nosniff')
+    res.setHeader('X-Frame-Options', 'DENY')
+    res.setHeader('X-XSS-Protection', '1; mode=block')
+    
+    // Apply Rate Limiter to AI endpoints
+    if (req.path.startsWith('/ai/')) {
+      if (!applyRateLimiting(req, res)) return
+    }
+    next()
+  })
+
+  // Health Probe Endpoint (/healthz)
+  app.get('/healthz', (req, res) => {
+    res.status(200).json({ status: 'UP', timestamp: new Date().toISOString() })
+  })
+
+  // Readiness Probe Endpoint (/readyz)
+  app.get('/readyz', async (req, res) => {
+    try {
+      // Ping Python worker subprocess via light discount action
+      const reply = await python.call({ action: 'discount', title: 'health', price: 10 })
+      if (reply && reply.original === 10) {
+        res.status(200).json({ status: 'READY', python: 'OK' })
+        return
+      }
+    } catch {
+      /* worker unavailable */
+    }
+    res.status(503).json({ status: 'NOT_READY', python: 'UNAVAILABLE' })
+  })
+
+  // POST /ai/ask/stream -> Server-Sent Events (SSE) Streaming
   app.post('/ai/ask/stream', async (req, res) => {
-    // Parse the JSON body manually: CDS mounts its body parser late, after this route.
     const body = await readJson(req)
     const { prompt, model } = body ?? {}
     if (!prompt?.trim()) {
@@ -27,14 +93,12 @@ cds.once('bootstrap', (app) => {
     res.setHeader('Connection', 'keep-alive')
     res.flushHeaders()
 
-    // Once the client disconnects (navigated away, etc.) stop forwarding tokens.
     let closed = false
     req.on('close', () => {
       closed = true
       res.end()
     })
 
-    // Each token Python receives is forwarded to the client as an SSE event.
     try {
       await python.call(args, (token) => {
         if (!closed && !res.writableEnded) {
@@ -43,8 +107,6 @@ cds.once('bootstrap', (app) => {
       })
       if (!res.writableEnded) res.write('data: [done]\n\n')
     } catch (err) {
-      // Push worker/provider failures into the stream so the client sees the
-      // error instead of hanging on an open-but-silent connection.
       if (!res.writableEnded) {
         res.write(`data: ${JSON.stringify({ error: err.message })}\n\n`)
       }
@@ -54,7 +116,6 @@ cds.once('bootstrap', (app) => {
   })
 })
 
-// Read a JSON request body defensively; never hang on malformed input.
 function readJson(req) {
   return new Promise((resolve) => {
     let raw = ''

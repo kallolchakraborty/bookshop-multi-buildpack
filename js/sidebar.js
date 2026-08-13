@@ -25,7 +25,8 @@
         'deployment': 'rocket_launch',
         'developer-guide': 'code',
         'testing': 'fact_check',
-        'libraries': 'inventory_2'
+        'libraries': 'inventory_2',
+        'support': 'menu_book'
       };
 
       var html = '<div class="sidebar-label">Documentation</div>';

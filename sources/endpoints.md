@@ -2,105 +2,111 @@
 
 ## Complete Endpoint Catalog
 
-### Node.js (Express/CAP) Endpoints
+### System & Health Probes
 
-#### Application Endpoints
+| Method | Path | Description | Response Example |
+|--------|------|-------------|------------------|
+| GET | `/healthz` | CAP Server & Memory Health Probe | `{"status":"OK"}` |
+| GET | `/readyz` | Stdin/Stdout IPC Channel & Python Worker Probe | `{"status":"READY","python":"OK"}` |
 
-| Method | Path | Description | Auth Required |
-|--------|------|-------------|---------------|
-| GET | `/health` | Application health check | No |
-| GET | `/odata/v4/catalog/Books` | List all books | Yes (optional) |
-| GET | `/odata/v4/catalog/Books(:id)` | Get book by ID | Yes (optional) |
-| POST | `/odata/v4/catalog/Books` | Create new book | Yes |
-| PATCH | `/odata/v4/catalog/Books(:id)` | Update book | Yes |
-| DELETE | `/odata/v4/catalog/Books(:id)` | Delete book | Yes |
-| GET | `/api/recommendations/:bookId` | Get recommendations (calls Python) | Yes |
-| POST | `/api/chat` | AI chat completion proxy | Yes |
-| POST | `/api/upload` | Upload book cover image | Yes |
-| GET | `/api/admin/stats` | Platform statistics | Yes (Admin) |
-
-#### AI Endpoints
+### OData V4 CatalogService (`/browse`)
 
 | Method | Path | Description | Auth Required |
 |--------|------|-------------|---------------|
-| POST | `/ai/chat` | AI chat with GenAI/AI Core | Yes |
-| POST | `/ai/chat/stream` | Streaming AI chat | Yes |
-| GET | `/ai/models` | List available AI models | Yes |
+| GET | `/browse/Books` | List all catalog books with authors & stock | Optional |
+| GET | `/browse/Authors` | List all authors | Optional |
+| GET | `/browse/Orders` | List user order history | Yes |
+| POST | `/browse/Orders` | Place a new order | Yes |
+| GET | `/browse/discount(title='The%20Bestseller')` | ML Python discount calculation function | Optional |
 
-**AI Chat Request Format**:
-```json
+### Enterprise GenAI Endpoints (`/ai`)
+
+| Method | Path | Description | Payload Parameters |
+|--------|------|-------------|--------------------|
+| POST | `/ai/ask` | Single-turn LLM completion | `{"prompt":"...", "model":"..."}` |
+| POST | `/ai/ask_rag` | SAP HANA Cloud REAL_VECTOR RAG search | `{"prompt":"...", "model":"..."}` |
+| POST | `/ai/ask_agent` | Stateful LangGraph Agentic workflow | `{"prompt":"...", "model":"..."}` |
+| POST | `/ai/ask/stream` | Real-time Server-Sent Events (SSE) streaming | `{"prompt":"...", "model":"..."}` |
+
+---
+
+## 4-Destination Model Selection Examples
+
+### 1. Priority 1 Primary (`google/diffusiongemma-26b-a4b-it`)
+```http
+POST /ai/ask
+Content-Type: application/json
+
 {
-  "messages": [
-    { "role": "user", "content": "Recommend books about SAP BTP" }
-  ],
-  "model": "gpt-4",
-  "temperature": 0.7,
-  "max_tokens": 500
+  "prompt": "What are the core concepts of software architecture?",
+  "model": "google/diffusiongemma-26b-a4b-it"
 }
 ```
 
-**AI Chat Response Format**:
-```json
+### 2. Priority 2 (`google/gemma-4-31b-it`)
+```http
+POST /ai/ask
+Content-Type: application/json
+
 {
-  "id": "chatcmpl-abc123",
-  "object": "chat.completion",
-  "created": 1677858242,
-  "choices": [
-    {
-      "index": 0,
-      "message": {
-        "role": "assistant",
-        "content": "Based on your interest in SAP BTP, I recommend..."
-      }
-    }
-  ]
+  "prompt": "Explain the difference between microservices and monoliths.",
+  "model": "google/gemma-4-31b-it"
 }
 ```
 
-### Python Backend Endpoints
+### 3. Priority 3 (`z-ai/glm-5.2`)
+```http
+POST /ai/ask
+Content-Type: application/json
 
-| Method | Path | Description | Internal Only |
-|--------|------|-------------|---------------|
-| GET | `/api/health` | Python service health | No |
-| POST | `/api/recommend` | ML recommendation engine | Yes |
-| POST | `/api/analyze` | Text sentiment analysis | Yes |
-| POST | `/api/predict` | Sales forecasting | Yes |
-| GET | `/api/models` | List available ML models | Yes |
-
-## Endpoint Security
-
-All endpoints (except `/health`) are protected by:
-- **XSUAA JWT validation** for user-facing endpoints
-- **Client credentials** for service-to-service calls
-- **Scope-based authorization** for admin endpoints
-- **Rate limiting** on `/ai/chat` (50 req/min per user)
-
-## AI Chat Request Flow
-
-![Request Flow](assets/diagrams/request-flow.svg)
-## CORS Configuration
-
-```javascript
-app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
-  credentials: true,
-  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-xsrf-token']
-}));
+{
+  "prompt": "Summarize the benefits of cloud native applications.",
+  "model": "z-ai/glm-5.2"
+}
 ```
 
-## Rate Limiting
+### 4. Priority 4 Fallback (`mistralai/mistral-nemotron`)
+```http
+POST /ai/ask
+Content-Type: application/json
 
-```javascript
-const rateLimit = require('express-rate-limit');
-
-const aiLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 50,
-  message: { error: 'Too many AI requests. Please try again later.' },
-  standardHeaders: true,
-  legacyHeaders: false
-});
-
-app.use('/ai/', aiLimiter);
+{
+  "prompt": "Recommend top 2 technology books and explain why.",
+  "model": "mistralai/mistral-nemotron"
+}
 ```
+
+---
+
+## SAP HANA Cloud Vector RAG Request
+
+```http
+POST /ai/ask_rag
+Content-Type: application/json
+
+{
+  "prompt": "Which bestseller books are available in stock with fantasy themes?",
+  "model": "google/diffusiongemma-26b-a4b-it"
+}
+```
+
+---
+
+## Stateful LangGraph Agent Request
+
+```http
+POST /ai/ask_agent
+Content-Type: application/json
+
+{
+  "prompt": "What is the discounted price for classic books?",
+  "model": "google/diffusiongemma-26b-a4b-it"
+}
+```
+
+---
+
+## Rate Limiting & Security Headers
+
+- **Sliding Window Rate Limiter**: Enforces 15 req/min per client IP. Returns HTTP 429 upon abuse.
+- **Security Headers**: Helmet & CORS configured for cross-origin protection.

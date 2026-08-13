@@ -1,14 +1,38 @@
-// AI service exposed at /ai. Delegates to an OpenAI-compatible AI API reached
-// through the BTP destination "meta-llama-3-3-70b-instruct" in production.
+// Enterprise AI Service exposed at path "/ai".
+// Delegates prompts, SAP HANA Cloud Vector RAG queries, and LangGraph agent requests
+// to the persistent co-located Python worker.
 service AIService @(path : '/ai') {
-  // Sends a prompt to the configured AI API and returns the assistant answer.
-  // Defaults to model "meta/llama-3.3-70b-instruct" (see handler / AI_MODEL env).
+
+  // Single-turn prompt completion action (direct LLM call via Python worker).
   action ask(
-    prompt : String, // the user prompt to send to the AI model
-    model  : String  // optional model id; overrides AI_MODEL if provided
+    prompt : String, // User query prompt
+    model  : String  // Optional LLM model identifier override
   ) returns {
-    answer  : String;  // assistant reply text
-    model   : String;  // model that generated the reply
-    latency : Integer; // round-trip time in milliseconds
+    answer  : String;  // LLM generated answer
+    model   : String;  // Model identifier used for generation
+    latency : Integer; // Execution latency in milliseconds
+  };
+
+  // RAG action: Performs SAP HANA Cloud REAL_VECTOR search and retrieves catalog context before LLM call.
+  action ask_rag(
+    prompt : String, // User catalog query prompt
+    model  : String  // Optional model identifier override
+  ) returns {
+    answer  : String;  // Context-augmented assistant reply
+    model   : String;  // Model used
+    latency : Integer; // Execution latency in milliseconds
+  };
+
+  // Stateful LangGraph Agent workflow action:
+  // Executes intent classification, conditional RAG, promo rate calculation, and guardrail verification.
+  action ask_agent(
+    prompt : String, // User query prompt for agent workflow
+    model  : String  // Optional model identifier override
+  ) returns {
+    answer           : String;  // Final verified assistant answer
+    model            : String;  // Model used
+    latency          : Integer; // Execution latency in milliseconds
+    intent           : String;  // Intent detected (discount_query, recommendation, general)
+    discount_applied : Decimal(4, 2); // Calculated discount rate (e.g., 0.20)
   };
 }

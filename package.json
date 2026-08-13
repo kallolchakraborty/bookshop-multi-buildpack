@@ -1,9 +1,9 @@
 {
-  "name": "bookshop-multi-buildpack",
+  "name": "bookshop-multi-buildpacks",
   "version": "1.0.0",
-  "description": "CAP Node.js bookshop app with Python functions and destination-backed AI APIs on multiple buildpacks, plus documentation website.",
+  "description": "CAP Node.js bookshop app with Python functions and destination-backed AI APIs on multiple buildpacks",
   "engines": {
-    "node": ">=22"
+    "node": ">=18"
   },
   "dependencies": {
     "@cap-js/hana": "^3.0.2",
@@ -24,13 +24,8 @@
     "mock:ai": "NODE_PATH= node test/mock-ai.js",
     "test": "NODE_PATH= node test/discount.test.js",
     "test:ai": "NODE_PATH= node test/ai-service.test.js",
-    "test:all": "NODE_PATH= npm test && NODE_PATH= npm run test:ai",
-    "docs:build": "node scripts/build.js",
-    "docs:start": "python3 -m http.server 3000",
-    "docs:dev": "node scripts/build.js && python3 -m http.server 3000"
+    "test:all": "NODE_PATH= npm test && NODE_PATH= npm run test:ai"
   },
-  "keywords": ["sap-btp", "multi-buildpack", "cap", "bookshop", "documentation"],
-  "license": "MIT",
   "cds": {
     "requires": {
       "db": true,

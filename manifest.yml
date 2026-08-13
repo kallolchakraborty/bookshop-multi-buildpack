@@ -25,8 +25,9 @@ applications:
     env:
       PYTHON_BIN: python3
       NODE_ENV: production
-      AI_MODEL: meta/llama-3.3-70b-instruct # default model used by the Python ask() call
-      AI_TIMEOUT: "900" # NVIDIA meta/llama-3.3-70b-instruct can take ~2min to first token
+      AI_MODEL: google/diffusiongemma-26b-a4b-it # primary LLM model
+      AI_MODEL_FALLBACKS: "google/diffusiongemma-26b-a4b-it,meta/llama-3.3-70b-instruct,gpt-4o-mini" # automatic model failover cascade chain
+      AI_TIMEOUT: "900"
       # LangSmith Telemetry (Optional: Set LANGCHAIN_API_KEY in BTP / CF env)
       LANGCHAIN_TRACING_V2: "true"
       LANGCHAIN_ENDPOINT: "https://api.smith.langchain.com"
@@ -35,6 +36,8 @@ applications:
       - bookshop-multi-buildpack-db # HDI container on the existing HANA Cloud free-tier instance (hana-cloud)
       - destination-service # Destination service: Node resolves "meta-llama-3-3-70b-instruct" (URL + auth) for Python
       - bookshop-multi-buildpack-uaa # XSUAA: authentication/authorization (recommended for destinations)
+      - redis-instance # Enterprise Redis Cache instance for Prompt & Response Caching
+      - application-logging-service # SAP BTP Application Logging service for structured error/system logging
       # - connectivity-service # Connectivity service: only needed for on-premise/private destinations
       # If you don't bind the destination service, set AI_BASE_URL / AI_API_KEY env vars
       # and Node passes them down to the Python worker instead.

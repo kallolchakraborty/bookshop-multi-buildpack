@@ -4,28 +4,41 @@
 
 ![Architecture Diagram](assets/diagrams/architecture.svg)
 
-The **BookShop Multi-Buildpack** application is an SAP BTP Cloud Foundry enterprise pattern built with SAP CAP (`@sap/cds`). It seamlessly combines a **Node.js runtime** (accepting OData V4 client requests) with a **co-located Python process** (handling ML discount calculations and LLM streaming inference).
+The **BookShop Multi-Buildpack** application is an SAP BTP Cloud Foundry enterprise pattern built with SAP CAP (`@sap/cds`). It seamlessly combines a **Node.js runtime** (accepting OData V4 client requests) with a **co-located Python process** running a stateful **LangGraph AI Agent**, **LangChain Chains**, **Enterprise Redis Prompt Cache**, and an **SAP HANA Cloud REAL_VECTOR RAG Engine**.
 
 ### Component & Process Flow
 
-1. **Client Request**: Clients connect to the CAP OData V4 endpoints (`/browse` or `/ai`) or Fiori Elements UI.
+1. **Client Request**: Clients connect to CAP OData V4 endpoints (`/browse`), AI endpoints (`/ai/ask`, `/ai/ask_rag`, `/ai/ask_agent`, `/ai/ask/stream`), or Fiori Elements UI.
 2. **Node.js CAP Server (`@sap/cds`)**:
    - Handles entity persistence, OData V4 routing, and XSUAA authentication.
-   - For special actions (`discount` or `ask`), Node.js delegates tasks to Python.
-   - Resolves BTP Destinations (e.g. `destination-service` resolving `meta-llama-3-3-70b-instruct`) and passes connection credentials down to Python.
+   - Enforces sliding-window rate limiting (15 req/min) and security headers.
+   - Auto-discovers BTP Destinations via `@sap-cloud-sdk/connectivity` (`google-diffusiongemma-26b-a4b-it`, `google-gemma-4-31b-it`, `z-ai-glm-5-2`, `mistralai-mistral-nemotron`) without hardcoded keys or secret URLs.
 3. **Python Worker Bridge (`python/functions.py --worker`)**:
-   - A single, persistent Python 3 process spawned lazily by `srv/python.js`.
-   - Communicates with Node.js via newline-delimited JSON-RPC over `stdin`/`stdout` (paid once per container lifecycle, 0ms per-request cold start).
-   - Performs discount math and OpenAI-compatible HTTP chat completion / SSE token streaming.
-4. **HANA Cloud / In-Memory DB**: Serves persistent catalog data (`Book`, `Author`, `Order`).
+   - A single, persistent Python process spawned lazily on startup by `srv/python.js`.
+   - Communicates with Node.js via newline-delimited JSON-RPC over `stdin`/`stdout` (0ms per-request cold start).
+4. **LangChain & LangGraph Stateful Agent Pipeline**:
+   - **Input Guardrails**: Scans for prompt injection attacks and redacts PII/secrets.
+   - **Enterprise Redis Prompt Cache**: Checks `redis-instance` for cached completions (< 5ms response time).
+   - **SAP HANA Cloud REAL_VECTOR Search**: Performs 1536-dim vector similarity search over book embeddings.
+   - **Multi-Model Router**: Executes failover cascade across BTP destinations:
+      <div class="failover-cascade">
+        <span class="fc-step p1">P1 · google/diffusiongemma-26b-a4b-it</span>
+        <span class="fc-arrow">→</span>
+        <span class="fc-step p2">P2 · google/gemma-4-31b-it</span>
+        <span class="fc-arrow">→</span>
+        <span class="fc-step p3">P3 · z-ai/glm-5.2</span>
+        <span class="fc-arrow">→</span>
+        <span class="fc-step fallback">Fallback · mistralai/mistral-nemotron</span>
+      </div>
+   - **Output Guardrails**: Redacts competitor names and validates response groundedness.
 
 ### Component Responsibilities
 
 | Component | Technology | Responsibility | Communication |
 |-----------|------------|----------------|---------------|
-| **Node.js CAP Server** | `@sap/cds` v10 / Express | OData V4 API (`/browse`), Fiori preview, Destination resolution, SSE streaming endpoint (`/ai/ask/stream`) | `http` on `$PORT` (default 4004 / 8080) |
-| **Python Worker** | Python 3 / `urllib` | Discount keyword calculations, NVIDIA Llama 3.3 70B AI chat completions | `stdin`/`stdout` JSON-RPC bridge |
-| **BTP Services** | XSUAA, Destination, HDI | Auth JWT validation, Destination key lookup, HANA DB storage | SAP BTP Service Bindings |
+| **Node.js CAP Gateway** | `@sap/cds` v10 / Express | OData V4 API (`/browse`), Rate limiting, Auto-Destination resolution, SSE streaming (`/ai/ask/stream`) | `http` on `$PORT` |
+| **Python ML & AI Worker** | Python 3 / LangChain / LangGraph | Input/Output Guardrails, Redis Cache, SAP HANA Vector RAG, Stateful Agent Workflow, Failover LLM Routing | `stdin`/`stdout` JSON-RPC bridge |
+| **SAP BTP Services** | XSUAA, Destination, Redis, SAP HANA Cloud | Auth JWT validation, Destination key lookup, Prompt cache (< 5ms), `REAL_VECTOR(1536)` storage | SAP BTP Service Bindings |
 
 ## Security Boundaries
 
@@ -33,4 +46,4 @@ The **BookShop Multi-Buildpack** application is an SAP BTP Cloud Foundry enterpr
 
 - **Authentication**: User authentication is enforced via SAP BTP XSUAA JWT validation.
 - **Service Isolation**: The Python process is co-located in the container and isolated from external networks; only the Node.js CAP server exposes external HTTP ports.
-- **Destination Security**: Outbound AI Core and external API credentials are managed securely through SAP BTP Destination Service.
+- **Anthropic Defense-in-Depth Guardrails**: Direct/indirect prompt injection defense, secret/PII redactor, XML tag prompt isolation, and competitor filtering.

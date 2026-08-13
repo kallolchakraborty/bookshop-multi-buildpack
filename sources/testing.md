@@ -1,227 +1,103 @@
 # Testing Strategy
 
-## Test Pyramid
-
-<div class="test-pyramid-wrapper">
-  <div class="pyramid-tier tier-e2e">
-    <span class="pyramid-icon">🎭</span>
-    <strong>E2E Tests</strong>
-    <span class="pyramid-label">Playwright / Cypress</span>
-    <span class="pyramid-count">~10%</span>
-  </div>
-  <div class="pyramid-tier tier-api">
-    <span class="pyramid-icon">🔗</span>
-    <strong>Integration Tests</strong>
-    <span class="pyramid-label">Supertest / Pytest</span>
-    <span class="pyramid-count">~30%</span>
-  </div>
-  <div class="pyramid-tier tier-unit">
-    <span class="pyramid-icon">⚡</span>
-    <strong>Unit Tests</strong>
-    <span class="pyramid-label">Jest + Pytest</span>
-    <span class="pyramid-count">~60%</span>
-  </div>
-  <div class="pyramid-legend">
-    <span class="legend-item"><span class="legend-dot dot-e2e"></span>Slow · Expensive · High confidence</span>
-    <span class="legend-item"><span class="legend-dot dot-unit"></span>Fast · Cheap · Isolated</span>
-  </div>
-</div>
-
-
-## Unit Tests
-
-### Node.js Unit Tests (Jest)
-
-```javascript
-// tests/unit/services/recommendation.service.test.js
-const recommendationService = require('../../../src/services/recommendation.service');
-
-describe('RecommendationService', () => {
-  test('should fetch recommendations from Python backend', async () => {
-    const mockResponse = {
-      data: {
-        recommendations: [
-          { id: '456', title: 'Test Book', score: 0.9 }
-        ]
-      }
-    };
-
-    global.axios = {
-      post: jest.fn().mockResolvedValue(mockResponse)
-    };
-
-    const result = await recommendationService.getRecommendations('123');
-    expect(result.recommendations).toHaveLength(1);
-    expect(result.recommendations[0].title).toBe('Test Book');
-  });
-
-  test('should handle Python backend timeout', async () => {
-    global.axios = {
-      post: jest.fn().mockRejectedValue({ code: 'ECONNABORTED' })
-    };
-
-    await expect(recommendationService.getRecommendations('123'))
-      .rejects.toThrow('Python backend timeout');
-  });
-});
-```
-
-### Python Unit Tests (Pytest)
-
-```python
-# tests/unit/test_recommendation.py
-import pytest
-from app import app
-
-@pytest.fixture
-def client():
-    app.config['TESTING'] = True
-    return app.test_client()
-
-def test_health_endpoint(client):
-    response = client.get('/api/health')
-    assert response.status_code == 200
-    assert response.json['status'] == 'healthy'
-
-def test_recommend_endpoint(client):
-    response = client.post('/api/recommend', json={'bookId': '123'})
-    assert response.status_code == 200
-    assert 'recommendations' in response.json
-```
-
-## Integration Tests
-
-### Node.js Integration Tests (Supertest)
-
-```javascript
-// tests/integration/api.test.js
-const request = require('supertest');
-const app = require('../../src/app');
-
-describe('API Integration', () => {
-  test('GET /health returns 200', async () => {
-    const response = await request(app).get('/health');
-    expect(response.status).toBe(200);
-    expect(response.body.status).toBe('ok');
-  });
-
-  test('POST /ai/chat returns AI response', async () => {
-    const response = await request(app)
-      .post('/ai/chat')
-      .set('Authorization', 'Bearer mock-jwt-token')
-      .send({ messages: [{ role: 'user', content: 'Hello' }] });
-    
-    expect(response.status).toBe(200);
-    expect(response.body.choices).toBeDefined();
-  });
-});
-```
-
-### Python Integration Tests
-
-```python
-# tests/integration/test_ml_pipeline.py
-def test_full_recommendation_pipeline(client):
-    response = client.post('/api/recommend', json={
-        'bookId': '123',
-        'userId': 'user-abc',
-        'algorithm': 'collaborative-filtering'
-    })
-    assert response.status_code == 200
-    data = response.json
-    assert 'recommendations' in data
-    assert len(data['recommendations']) > 0
-    assert 'model' in data
-```
-
-## End-to-End Tests (Playwright)
-
-```javascript
-// tests/e2e/bookshop.spec.js
-const { test, expect } = require('@playwright/test');
-
-test.describe('Bookshop E2E', () => {
-  test('user can browse books and get AI recommendations', async ({ page }) => {
-    await page.goto('http://localhost:3000');
-    
-    await page.fill('[data-testid="search-books"]', 'SAP');
-    await page.click('[data-testid="search-button"]');
-    
-    await expect(page.locator('[data-testid="book-card"]')).toHaveCount(5);
-    
-    await page.click('[data-testid="book-card"]:first-child');
-    await page.click('[data-testid="get-recommendations"]');
-    
-    await expect(page.locator('[data-testid="recommendation-card"]')).toHaveCount(3);
-  });
-
-  test('AI chat responds correctly', async ({ page }) => {
-    await page.goto('http://localhost:3000/chat');
-    
-    await page.fill('[data-testid="chat-input"]', 'Recommend SAP books');
-    await page.click('[data-testid="send-button"]');
-    
-    await expect(page.locator('[data-testid="ai-response"]')).toBeVisible();
-  });
-});
-```
-
-## Running Tests
+## Running the Test Suite
 
 ```bash
-# Run all tests
+# CAP OData & discount calculation tests
 npm test
 
-# Run Node.js unit tests
-npm run test:unit
+# AI integration tests (all 4 BTP destination models)
+npm run test:ai
 
-# Run Python unit tests
-cd python-backend && pytest
-
-# Run integration tests
-npm run test:integration
-
-# Run E2E tests
-npm run test:e2e
-
-# Coverage report
-npm run test:coverage
+# Run all tests
+npm run test:all
 ```
 
-## package.json Test Scripts
+---
 
-```json
-{
-  "scripts": {
-    "test": "npm run test:unit && npm run test:integration && cd python-backend && pytest",
-    "test:unit": "jest --config jest.config.js",
-    "test:integration": "jest --config jest.integration.config.js",
-    "test:e2e": "playwright test",
-    "test:coverage": "jest --coverage && cd python-backend && pytest --cov=app",
-    "test:watch": "jest --watch"
-  }
-}
+## 1. HTTP REST Client Test Suite (`test/http-requests.http`)
+
+Open [`test/http-requests.http`](file:///Users/kallolchakraborty/Downloads/BookShop-Multibuildpack/bookshop-multi-buildpack/test/http-requests.http) in VS Code REST Client or Antigravity IDE.
+
+### System Probes
+```http
+### Health Probe
+GET https://bookshop-multi-buildpack.cfapps.us10-003.hana.ondemand.com/healthz
+
+### Readiness Probe (tests Python IPC channel)
+GET https://bookshop-multi-buildpack.cfapps.us10-003.hana.ondemand.com/readyz
 ```
 
-## CI/CD Pipeline Tests
+### OData V4 Catalog Endpoints
+```http
+### List Books
+GET https://bookshop-multi-buildpack.cfapps.us10-003.hana.ondemand.com/browse/Books
 
-```yaml
-# .github/workflows/test.yml
-name: Test Pipeline
-on: [push, pull_request]
-jobs:
-  test-node:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-      - run: npm ci
-      - run: npm test
-  
-  test-python:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-      - run: cd python-backend && pip install -r requirements.txt && pytest
+### ML Python Discount Calculation
+GET https://bookshop-multi-buildpack.cfapps.us10-003.hana.ondemand.com/browse/discount(title='The%20Bestseller')
 ```
+
+### AI Endpoints — 4-Destination Failover Coverage
+```http
+### Priority 1: google/diffusiongemma-26b-a4b-it
+POST .../ai/ask
+{ "prompt": "What are the core concepts of software architecture?", "model": "google/diffusiongemma-26b-a4b-it" }
+
+### Priority 2: google/gemma-4-31b-it
+POST .../ai/ask
+{ "prompt": "Explain the difference between microservices and monoliths.", "model": "google/gemma-4-31b-it" }
+
+### Priority 3: z-ai/glm-5.2
+POST .../ai/ask
+{ "prompt": "Summarize the benefits of cloud native applications.", "model": "z-ai/glm-5.2" }
+
+### Fallback: mistralai/mistral-nemotron
+POST .../ai/ask
+{ "prompt": "Recommend top 2 technology books and explain why.", "model": "mistralai/mistral-nemotron" }
+
+### SAP HANA REAL_VECTOR RAG Search
+POST .../ai/ask_rag
+{ "prompt": "Which bestseller books are available in stock with fantasy themes?", "model": "google/diffusiongemma-26b-a4b-it" }
+
+### Stateful LangGraph Agent
+POST .../ai/ask_agent
+{ "prompt": "What is the discounted price for classic books?", "model": "google/diffusiongemma-26b-a4b-it" }
+
+### SSE Streaming
+POST .../ai/ask/stream
+{ "prompt": "Provide a quick overview of cloud design patterns.", "model": "z-ai/glm-5.2" }
+```
+
+---
+
+## 2. Automated Integration Tests (`test/ai-service.test.js`)
+
+```javascript
+// Verifies all 4 BTP destination models respond correctly
+const modelsToTest = [
+  'google/diffusiongemma-26b-a4b-it',  // Priority 1 Primary
+  'google/gemma-4-31b-it',             // Priority 2
+  'z-ai/glm-5.2',                      // Priority 3
+  'mistralai/mistral-nemotron'         // Designated Fallback
+]
+
+// Also validates:
+// - Input guardrails block prompt injection
+// - SSE streaming endpoint emits data: chunks
+// - RAG endpoint performs HANA vector search
+```
+
+Run with: `npm run test:ai`
+
+---
+
+## 3. CAP OData Tests (`test/discount.test.js`)
+
+```javascript
+// Validates:
+// - Book catalog entity queries
+// - Discount calculation Python function
+// - Author entity joins
+```
+
+Run with: `npm test`

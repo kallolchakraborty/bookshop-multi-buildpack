@@ -21,17 +21,19 @@
       "name": data.title || '',
       "description": data.description || '',
       "url": window.location.href,
-      "publisher": { "@type": "Person", "name": "SAP BTP Architect" }
+      "publisher": { "@type": "Person", "name": "Kallol Chakraborty" }
     };
     jsonld.textContent = JSON.stringify(schema);
   }
 
   function updateMetaTags(title, description) {
+    var metaDesc = document.querySelector('meta[name="description"]');
     var ogTitle = document.querySelector('meta[property="og:title"]');
     var ogDesc = document.querySelector('meta[property="og:description"]');
     var ogUrl = document.querySelector('meta[property="og:url"]');
     var twTitle = document.querySelector('meta[name="twitter:title"]');
     var twDesc = document.querySelector('meta[name="twitter:description"]');
+    if (metaDesc && description) metaDesc.setAttribute('content', description);
     if (ogTitle) ogTitle.setAttribute('content', title);
     if (ogDesc && description) ogDesc.setAttribute('content', description);
     if (ogUrl) ogUrl.setAttribute('content', window.location.href);
@@ -64,6 +66,21 @@
         link.removeAttribute('aria-current');
       }
     });
+
+    var tabReadme = document.getElementById('tab-readme');
+    var tabDevGuide = document.getElementById('tab-devguide');
+    if (tabReadme && tabDevGuide) {
+      if (hash === '#developer-guide') {
+        tabDevGuide.classList.add('active');
+        tabReadme.classList.remove('active');
+      } else if (hash === '#introduction' || !hash || hash === '#') {
+        tabReadme.classList.add('active');
+        tabDevGuide.classList.remove('active');
+      } else {
+        tabReadme.classList.remove('active');
+        tabDevGuide.classList.remove('active');
+      }
+    }
   }
 
   function updatePageTitle(title, description, phase, phaseName) {
@@ -88,7 +105,9 @@
       '11. Deployment Modes': 'rocket_launch',
       '12. Developer Getting Started': 'code',
       '13. Testing Suite': 'fact_check',
-      '14. Dependencies & Tech Stack': 'inventory_2'
+      '14. Dependencies & Tech Stack': 'inventory_2',
+      '14. Enterprise Architecture & Support Guide': 'menu_book',
+      '15. Enterprise Architecture Guide': 'menu_book'
     };
     var icon = iconMap[title] || 'article';
 
@@ -181,20 +200,22 @@
 
   function updateRightOutline() {
     if (!rightOutline) return;
-    var h2s = main.querySelectorAll('h2');
-    if (!h2s.length) {
+    var headings = main.querySelectorAll('h2, h3');
+    if (!headings.length) {
       rightOutline.innerHTML = '<p class="text-xs text-slate-400 italic">No section headings</p>';
       return;
     }
 
     var html = '';
-    h2s.forEach(function(h2, idx) {
-      var id = h2.getAttribute('id');
+    headings.forEach(function(h, idx) {
+      var id = h.getAttribute('id');
       if (!id) {
-        id = 'heading-' + idx + '-' + h2.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        h2.setAttribute('id', id);
+        id = 'heading-' + idx + '-' + h.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        h.setAttribute('id', id);
       }
-      html += '<a href="#' + id + '" class="block text-slate-500 hover:text-brand-500 dark:text-slate-400 dark:hover:text-brand-400 text-xs py-1 transition-colors outline-link">' + escapeHtml(h2.textContent) + '</a>';
+      var isH3 = h.tagName.toLowerCase() === 'h3';
+      var padClass = isH3 ? 'pl-3 text-[11px] opacity-80' : 'text-xs font-medium';
+      html += '<a href="#' + id + '" class="block text-slate-500 hover:text-brand-500 dark:text-slate-400 dark:hover:text-brand-400 py-1 transition-colors outline-link ' + padClass + '">' + escapeHtml(h.textContent) + '</a>';
     });
     rightOutline.innerHTML = html;
 
@@ -212,8 +233,8 @@
 
   function setupScrollSpy() {
     if (scrollObserver) scrollObserver.disconnect();
-    var h2s = main.querySelectorAll('h2');
-    if (!h2s.length || !rightOutline) return;
+    var headings = main.querySelectorAll('h2, h3');
+    if (!headings.length || !rightOutline) return;
 
     scrollObserver = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry) {
@@ -231,7 +252,7 @@
       });
     }, { rootMargin: '-60px 0px -70% 0px' });
 
-    h2s.forEach(function(h2) { scrollObserver.observe(h2); });
+    headings.forEach(function(h) { scrollObserver.observe(h); });
   }
 
   function getCleanHash(hash) {

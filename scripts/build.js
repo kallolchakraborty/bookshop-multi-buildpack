@@ -4,8 +4,12 @@ const path = require('path');
 const sourcesDir = path.join(__dirname, '..', 'sources');
 const contentDir = path.join(__dirname, '..', 'content');
 const jsDir = path.join(__dirname, '..', 'js');
+const rootDir = path.join(__dirname, '..');
 
 if (!fs.existsSync(contentDir)) fs.mkdirSync(contentDir, { recursive: true });
+
+// Base URL for SEO & Sitemaps
+const SITE_URL = 'https://kallolchakraborty.github.io/bookshop-multi-buildpack';
 
 // Logical learning sequence for developers
 const ORDERED_SLUGS = [
@@ -20,9 +24,9 @@ const ORDERED_SLUGS = [
   'destinations',
   'configuration',
   'deployment',
-  'developer-guide',
   'testing',
-  'libraries'
+  'libraries',
+  'support'
 ];
 
 function scanDir(dir) {
@@ -35,7 +39,7 @@ function scanDir(dir) {
 
 function formatTitle(slug) {
   const customTitles = {
-    'introduction': '1. Introduction',
+    'introduction': '1. README & Overview',
     'architecture': '2. System Architecture',
     'file-structure': '3. File Structure',
     'buildpacks': '4. Multi-Buildpack Mechanism',
@@ -46,12 +50,30 @@ function formatTitle(slug) {
     'destinations': '9. Destinations Setup',
     'configuration': '10. Configuration & Envs',
     'deployment': '11. Deployment Modes',
-    'developer-guide': '12. Developer Getting Started',
-    'testing': '13. Testing Suite',
-    'libraries': '14. Dependencies & Tech Stack'
+    'testing': '12. Testing Suite',
+    'libraries': '13. Dependencies & Tech Stack',
+    'support': '14. Enterprise Architecture & Support Guide',
+    'developer-guide': 'Developer Guide'
   };
   return customTitles[slug] || slug.replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
+
+const customDescriptions = {
+  'introduction': 'Comprehensive overview and key features of the SAP BTP BookShop Multi-Buildpack CAP Node.js and Python application.',
+  'architecture': 'In-depth architecture diagram, components, and data flow of the co-located CAP Node.js and Python LangGraph system on SAP BTP.',
+  'file-structure': 'Complete directory layout and module organization for the Cloud Foundry multi-buildpack bookshop project.',
+  'buildpacks': 'Explanation of Cloud Foundry multi-buildpack staging order, compile scripts, and Node.js plus Python droplet packaging.',
+  'server-js': 'CAP custom server orchestrator implementation managing Python child processes, health checks, and IPC.',
+  'communication': 'Zero-latency JSON-RPC over stdin/stdout IPC communication protocols between Node.js CAP and Python AI agent.',
+  'endpoints': 'API reference and interactive guide for OData V4 catalog, orders, and AI chat endpoints.',
+  'services': 'SAP BTP backing service configurations including SAP HANA Cloud, Destination Service, XSUAA, and Redis cache.',
+  'destinations': 'Configuration and automatic discovery of SAP BTP HTTP and AI Core destinations with fallback cascading.',
+  'configuration': 'Environment variables, .env setup, Cloud Foundry manifest properties, and local dev configuration.',
+  'deployment': 'Step-by-step deployment guide for local development, hybrid mode with SAP HANA Cloud, and production Cloud Foundry.',
+  'testing': 'Automated testing strategy with Jest, CDS test harness, AI mock servers, and HTTP integration requests.',
+  'libraries': 'Complete breakdown of runtime dependencies, npm packages, and Python requirements used across the project.',
+  'support': 'Enterprise developer and architecture manual with LangGraph, REAL_VECTOR RAG, Redis caching, and guardrail specifications.'
+};
 
 function escapeHtml(text) {
   return text
@@ -101,9 +123,9 @@ function parseMarkdown(md) {
     var lines = block.trim().split('\n');
     var headerLine = lines[0];
     var bodyLines = lines.slice(2);
-    var headers = headerLine.split('|').map(function(cell) { return cell.trim(); }).filter(function(cell, idx, arr) { return idx > 0 && idx < arr.length - 1 || (idx === 0 && cell !== '') || (idx === arr.length - 1 && cell !== ''); });
+    var headers = headerLine.split('|').map(function(cell) { return cell.trim(); }).filter(function(cell, idx, arr) { return (idx > 0 && idx < arr.length - 1) || (idx === 0 && cell !== '') || (idx === arr.length - 1 && cell !== ''); });
     var rows = bodyLines.map(function(line) {
-      return line.split('|').map(function(cell) { return cell.trim(); }).filter(function(cell, idx, arr) { return idx > 0 && idx < arr.length - 1 || (idx === 0 && cell !== '') || (idx === arr.length - 1 && cell !== ''); });
+      return line.split('|').map(function(cell) { return cell.trim(); }).filter(function(cell, idx, arr) { return (idx > 0 && idx < arr.length - 1) || (idx === 0 && cell !== '') || (idx === arr.length - 1 && cell !== ''); });
     });
     var tableHtml = '<div class="table-wrapper"><table><thead><tr>';
     headers.forEach(function(h) { tableHtml += '<th>' + escapeHtml(h) + '</th>'; });
@@ -200,7 +222,7 @@ for (const file of files) {
   const content = fs.readFileSync(fullPath, 'utf-8');
   const slug = file.replace(/\.md$/, '');
   const title = formatTitle(slug);
-  const description = '';
+  const description = customDescriptions[slug] || `${title} - SAP BTP BookShop Multi-Buildpack documentation.`;
   
   const hash = '#' + slug;
   const contentPath = `content/${slug}.json`;
@@ -216,7 +238,7 @@ for (const file of files) {
     description: description,
     sections: [],
     content: parseMarkdown(content),
-    tags: [slug],
+    tags: [slug, 'sap-btp', 'multi-buildpack', 'cap', 'nodejs', 'python'],
     details: ''
   };
 
@@ -242,13 +264,18 @@ for (const file of files) {
     phaseName: null,
     category: 'Documentation',
     url: 'docs.html' + hash,
-    tags: [slug],
+    tags: [slug, 'sap-btp', 'multi-buildpack'],
     description: description.substring(0, 160),
     sections: ['Overview'],
     sectionsText: sectionsText,
     detailsText: '',
     code: ''
   });
+}
+
+// Ensure alias for developer-guide routes to support
+if (routeMap['#support'] && !routeMap['#developer-guide']) {
+  routeMap['#developer-guide'] = routeMap['#support'];
 }
 
 const generatedJs = `// Auto-generated by scripts/build.js
@@ -262,6 +289,40 @@ window.__SEARCH_INDEX = ${JSON.stringify(searchIndex)};
 `;
 
 fs.writeFileSync(path.join(jsDir, 'generated.js'), generatedJs);
+
+// Generate sitemap.xml
+const today = new Date().toISOString().split('T')[0];
+let sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${SITE_URL}/</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/docs.html</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+`;
+
+for (const slug of contentFiles) {
+  const priority = slug === 'introduction' || slug === 'support' ? '0.9' : '0.8';
+  sitemapXml += `  <url>
+    <loc>${SITE_URL}/docs.html#${slug}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>${priority}</priority>
+  </url>
+`;
+}
+
+sitemapXml += `</urlset>\n`;
+fs.writeFileSync(path.join(rootDir, 'sitemap.xml'), sitemapXml);
+
 console.log(`Generated ${contentFiles.length} content JSON files with logical ordering.`);
 console.log(`Route map entries: ${Object.keys(routeMap).length}`);
 console.log(`Search index entries: ${searchIndex.length}`);
+console.log(`Updated sitemap.xml with ${contentFiles.length + 2} URLs.`);

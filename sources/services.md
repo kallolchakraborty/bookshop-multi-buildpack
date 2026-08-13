@@ -77,90 +77,75 @@ services:
 
 ### 2. Destination Service
 
-**Purpose**: Centralized connectivity configuration for outbound systems
+**Purpose**: Centralized connectivity configuration for AI Model Endpoints in SAP BTP Cockpit.
 
-**Destination Creation Details**:
+**BTP AI Destinations Configuration Table**:
 
-1. **Via SAP BTP Cockpit**:
-   - Navigate to subaccount → Connectivity → Destinations
-   - Click "New Destination"
-   - Fill in the configuration (see table below)
+| Destination Name | Type | Target Model | Priority / Role | Authentication |
+|------------------|------|--------------|-----------------|----------------|
+| `google-diffusiongemma-26b-a4b-it` | `HTTP` | `google/diffusiongemma-26b-a4b-it` | **Priority 1 (Primary)** | Custom (API Key in Header) |
+| `google-gemma-4-31b-it` | `HTTP` | `google/gemma-4-31b-it` | **Priority 2 (P2)** | Custom (API Key in Header) |
+| `z-ai-glm-5-2` | `HTTP` | `z-ai/glm-5.2` | **Priority 3** | Custom (API Key in Header) |
+| `mistralai-mistral-nemotron` | `HTTP` | `mistralai/mistral-nemotron` | **Priority 4 (Fallback)** | Custom (API Key in Header) |
 
-2. **Via BTP CLI**:
-   ```bash
-   btp set accounts/enablement
-   btp get destinations/instance-key
-   btp create destinations/config \
-     --name python-service \
-     --host my-destination-host \
-     --path / \
-     --destination-type HTTP
-   ```
+**Dynamic Auto-Selection in Code (`srv/ai-destination.js`)**:
+```javascript
+const { getDestination } = require('@sap-cloud-sdk/connectivity')
 
-**Destination Configuration Table**:
+const CANDIDATE_DESTINATIONS = [
+  process.env.AI_DESTINATION,
+  'google-diffusiongemma-26b-a4b-it',
+  'google-gemma-4-31b-it',
+  'z-ai-glm-5-2',
+  'mistralai-mistral-nemotron'
+].filter(Boolean)
 
-| Property | Value | Description |
-|----------|-------|-------------|
-| Name | `python-service` | Unique destination name |
-| Type | `HTTP` | HTTP destination type |
-| URL | `http://localhost:5000` | Backend URL |
-| Proxy Type | `OnPremise` or `Internet` | Network proxy setting |
-| Authentication | `NoAuthentication` | Internal service, no auth |
-| WebIDEEnabled | `true` | Enable for development |
-| WebIDEUsage | `odata_abap,dev_abap` | Usage context |
-
-**Destination for /ai/chat with Authentication**:
-```json
-{
-  "name": "ai-core-service",
-  "type": "HTTP",
-  "url": "https://api.ai.core.sap/v2",
-  "proxyType": "Internet",
-  "authentication": "OAuth2UserTokenExchange",
-  "scope": "$XSAPPNAME.bookshop-ai",
-  "WebIDEEnabled": true,
-  "WebIDEUsage": "odata_abap,api_abap"
+async function getAIDestination() {
+  for (const name of CANDIDATE_DESTINATIONS) {
+    try {
+      const dest = await getDestination({ destinationName: name })
+      if (dest?.url) {
+        return {
+          baseUrl: dest.url,
+          apiKey: dest.authHeaders?.apikey || dest.originalProperties?.APIKey || '',
+          model: dest.originalProperties?.Model || '',
+          destinationName: name
+        }
+      }
+    } catch {
+      // Candidate not present in BTP Cockpit, proceed to next candidate
+    }
+  }
 }
 ```
 
-**Does /ai/chat support destinations with authentication?**  
-**YES**. The `/ai/chat` endpoint supports destinations with authentication, specifically:
-- **OAuth2UserTokenExchange**: Recommended for AI services requiring user context propagation
-- **OAuth2ClientCredentials**: For service-to-service AI calls
-- **BasicAuthentication**: For simple backend AI APIs
-- **PrincipalPropagation**: For end-to-end user identity propagation
+---
 
-The application reads the destination configuration at runtime:
-```javascript
-const destination = await destinationService.getDestination({
-  destinationName: 'ai-core-service'
-});
-const auth = destination.getAuthentication();
-// Handles OAuth2UserTokenExchange, OAuth2ClientCredentials, etc.
-```
+### 3. SAP HANA Cloud (REAL_VECTOR Search)
 
-### 3. Cloud Foundry Application Runtime
+**Purpose**: Stores 1536-dimensional vector embeddings for book titles and synopses.
+- **Data Type**: `REAL_VECTOR(1536)`
+- **Similarity Metric**: `COSINE_SIMILARITY()`
+- **Service Plan**: `hdi-shared`
 
-**Purpose**: Hosting platform for the multi-buildpack application
+---
 
-### 4. Optional Services
+### 4. SAP BTP Redis Instance
 
-| Service | Purpose | Required |
-|---------|---------|----------|
-| HANA Cloud | Persistent database for books, users | Yes |
-| AI Core | ML model deployment and serving | Recommended |
-| Email Service | Notifications and password reset | Optional |
-| Redis | Session caching and rate limiting | Recommended |
+**Purpose**: High-throughput prompt completion cache.
+- **Cache Hit Latency**: **< 5ms**
+- **Key Strategy**: `SHA-256(model + ":" + prompt)`
+- **Auto-Binding**: Discovered automatically from `VCAP_SERVICES["redis-instance"]`
 
-## Service Bindings in Manifest
+---
+
+## Service Bindings in `manifest.yml`
 
 ```yaml
 services:
   - bookshop-xsuaa
   - bookshop-destination
   - bookshop-hana
-  - bookshop-ai-core
-
-env:
-  destinations: '[{"name":"python-service","url":"http://localhost:5000"}]'
+  - bookshop-redis
 ```
+

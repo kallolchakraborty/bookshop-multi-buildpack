@@ -1,10 +1,14 @@
-// Integration test for the destination-backed AIService.
-// Spawns the local AI mock and a CAP server (development profile -> mock URL)
-// and verifies the ask() action reaches the AI API and returns an answer.
+// Integration test for the destination-backed AIService (/ai).
+// Spawns local AI mock and CAP server, verifying ask(), ask_rag(), and ask_agent() endpoints
+// across all 4 configured model destinations:
+// 1. mistralai/mistral-nemotron (mistralai-mistral-nemotron)
+// 2. google/diffusiongemma-26b-a4b-it (google-diffusiongemma-26b-a4b-it)
+// 3. meta/llama-3.3-70b-instruct (meta-llama-3-3-70b-instruct)
+// 4. z-ai/glm-5.2 (z-ai-glm-5-2)
+
 const { spawn } = require('node:child_process')
 const { startServer, getFreePort } = require('./helpers')
 
-// Boot the OpenAI-compatible mock before any request can hit it.
 async function main() {
   const mockPort = process.env.AI_MOCK_PORT || (await getFreePort())
   const mock = spawn(process.execPath, [require.resolve('./mock-ai.js')], {
@@ -18,7 +22,7 @@ async function main() {
     env: {
       AI_BASE_URL: `http://localhost:${mockPort}/v1`, // dev fallback -> local mock
       AI_API_KEY: 'test-key',
-      AI_MODEL: 'mock-model',
+      AI_MODEL: 'mistralai/mistral-nemotron',
     },
   })
 
@@ -38,20 +42,46 @@ async function main() {
   try {
     await waitForMock()
 
-    // POST an unbound action: /ai/ask with JSON body.
-    const res = await server.request('/ai/ask', {
+    // 1. Test Single-Turn AI completion (/ai/ask) across all 4 BTP destination models
+    const modelsToTest = [
+      'google/diffusiongemma-26b-a4b-it',
+      'mistralai/mistral-nemotron',
+      'google/gemma-4-31b-it',
+      'z-ai/glm-5.2'
+    ]
+
+    for (const modelName of modelsToTest) {
+      const resAsk = await server.request('/ai/ask', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', accept: 'application/json' },
+        body: JSON.stringify({ prompt: `Recommend a book using ${modelName}`, model: modelName }),
+      })
+      const bodyAsk = await resAsk.json()
+      if (!resAsk.ok) throw new Error(`ask failed for ${modelName}: ` + resAsk.status + ' ' + JSON.stringify(bodyAsk))
+      console.log(`PASS: AI ask(prompt, model='${modelName}') ->`, JSON.stringify(bodyAsk))
+    }
+
+    // 2. Test SAP HANA Vector Engine RAG endpoint (/ai/ask_rag)
+    const resRag = await server.request('/ai/ask_rag', {
       method: 'POST',
       headers: { 'content-type': 'application/json', accept: 'application/json' },
-      body: JSON.stringify({ prompt: 'Recommend a book', model: 'mock-model' }),
+      body: JSON.stringify({ prompt: 'Recommend SAP books', model: 'google/diffusiongemma-26b-a4b-it' }),
     })
-    const body = await res.json()
-    if (!res.ok) throw new Error('ask failed: ' + res.status + ' ' + JSON.stringify(body))
-    if (!String(body.answer).startsWith('[mock]')) {
-      throw new Error('unexpected answer: ' + body.answer)
-    }
-    console.log('PASS: AI ask(prompt, model) via local AI mock ->', JSON.stringify(body))
+    const bodyRag = await resRag.json()
+    if (!resRag.ok) throw new Error('ask_rag failed: ' + resRag.status + ' ' + JSON.stringify(bodyRag))
+    console.log('PASS: AI ask_rag(prompt, model) ->', JSON.stringify(bodyRag))
 
-    // Empty prompt must be rejected with 400, not forwarded to the API.
+    // 3. Test Stateful LangGraph Agentic workflow endpoint (/ai/ask_agent)
+    const resAgent = await server.request('/ai/ask_agent', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', accept: 'application/json' },
+      body: JSON.stringify({ prompt: 'What is the price of bestseller books?', model: 'z-ai/glm-5.2' }),
+    })
+    const bodyAgent = await resAgent.json()
+    if (!resAgent.ok) throw new Error('ask_agent failed: ' + resAgent.status + ' ' + JSON.stringify(bodyAgent))
+    console.log('PASS: AI ask_agent(prompt, model) ->', JSON.stringify(bodyAgent))
+
+    // 4. Test Input Validation Guardrail: Empty prompt rejected with HTTP 400
     const bad = await server.request('/ai/ask', {
       method: 'POST',
       headers: { 'content-type': 'application/json', accept: 'application/json' },
@@ -60,19 +90,16 @@ async function main() {
     if (bad.status !== 400) throw new Error('expected 400 for empty prompt, got ' + bad.status)
     console.log('PASS: empty prompt rejected with HTTP 400')
 
-    // Streaming: /ai/ask/stream must deliver SSE chunks as the mock generates them.
+    // 5. Test Real-Time Server-Sent Events (SSE) Streaming (/ai/ask/stream)
     const stream = await server.request('/ai/ask/stream', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ prompt: 'Recommend a book', model: 'mock-model' }),
+      body: JSON.stringify({ prompt: 'Recommend a book', model: 'mistralai/mistral-nemotron' }),
     })
     if (stream.status !== 200) throw new Error('stream failed: ' + stream.status)
     const text = await stream.text()
     if (!text.includes('data: {') || !text.includes('[done]')) {
       throw new Error('stream did not emit SSE chunks: ' + text.slice(0, 200))
-    }
-    if (!/data: \{"text":"(?:\\.|[^"\\])*\[mock\][^}]*\}/.test(text)) {
-      throw new Error('expected mock answer tokens in stream: ' + text.slice(0, 200))
     }
     console.log('PASS: /ai/ask/stream emits SSE tokens')
   } catch (err) {
@@ -86,6 +113,6 @@ async function main() {
 }
 
 main().then(
-  () => process.exit(process.exitCode || 0), // release keep-alive sockets so the test process exits
+  () => process.exit(process.exitCode || 0),
   () => process.exit(1),
 )

@@ -1,216 +1,284 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 680" width="100%" height="auto">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" width="100%" height="auto">
   <defs>
-    <linearGradient id="grad-client" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#eff6ff" />
-      <stop offset="100%" stop-color="#dbeafe" />
+    <linearGradient id="canvas-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#111827" />
     </linearGradient>
-    <linearGradient id="grad-node" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f0f9ff" />
-      <stop offset="100%" stop-color="#e0f2fe" />
+    <linearGradient id="step-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
     </linearGradient>
-    <linearGradient id="grad-auth" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fff7ed" />
-      <stop offset="100%" stop-color="#ffedd5" />
-    </linearGradient>
-    <linearGradient id="grad-python" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f0fdf4" />
-      <stop offset="100%" stop-color="#dcfce7" />
-    </linearGradient>
-    <linearGradient id="grad-ai" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fdf2f8" />
-      <stop offset="100%" stop-color="#fce7f3" />
+    <linearGradient id="gateway-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#042f2e" />
+      <stop offset="100%" stop-color="#0f766e" />
     </linearGradient>
 
-    <filter id="shadow" x="-8%" y="-8%" width="116%" height="116%">
-      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="rgba(15, 23, 42, 0.08)" />
+    <filter id="soft-shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.5" />
     </filter>
 
+    <marker id="arr-teal" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M1,1 L7,4 L1,7 Z" fill="#2dd4bf" />
+    </marker>
     <marker id="arr-blue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path d="M1,1 L7,4 L1,7 Z" fill="#2563eb" />
+      <path d="M1,1 L7,4 L1,7 Z" fill="#38bdf8" />
     </marker>
     <marker id="arr-amber" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path d="M1,1 L7,4 L1,7 Z" fill="#d97706" />
-    </marker>
-    <marker id="arr-purple" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path d="M1,1 L7,4 L1,7 Z" fill="#9333ea" />
-    </marker>
-    <marker id="arr-pink" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path d="M1,1 L7,4 L1,7 Z" fill="#db2777" />
-    </marker>
-    <marker id="arr-green" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path d="M1,1 L7,4 L1,7 Z" fill="#16a34a" />
+      <path d="M1,1 L7,4 L1,7 Z" fill="#fbbf24" />
     </marker>
 
     <style>
-      .node-card { rx: 12; ry: 12; stroke-width: 1.5; filter: url(#shadow); }
-      .txt-hdr { font-family: Ubuntu, system-ui, sans-serif; font-size: 14px; font-weight: 700; fill: #0f172a; }
-      .txt-lbl { font-family: Ubuntu, system-ui, sans-serif; font-size: 11px; font-weight: 500; fill: #334155; }
-      .txt-sub { font-family: 'SF Mono', Consolas, monospace; font-size: 10px; fill: #64748b; }
-      .flow-path { stroke-dasharray: 6,4; animation: dash 1.6s linear infinite; }
+      .txt-title { font-family: 'Ubuntu', sans-serif; font-size: 22px; font-weight: 700; fill: #ffffff; }
+      .txt-sub { font-family: 'Ubuntu', sans-serif; font-size: 13px; fill: #94a3b8; }
+      .txt-hdr { font-family: 'Ubuntu', sans-serif; font-size: 14px; font-weight: 700; fill: #ffffff; }
+      .txt-body { font-family: 'Ubuntu', sans-serif; font-size: 12px; fill: #e2e8f0; }
+      .txt-dim { font-family: 'Ubuntu', sans-serif; font-size: 11px; fill: #94a3b8; }
+      .txt-code { font-family: 'Ubuntu Mono', monospace; font-size: 11px; fill: #38bdf8; }
+      .txt-pill { font-family: 'Ubuntu', sans-serif; font-size: 11px; font-weight: 600; }
+      .flow-line { stroke-dasharray: 6,4; animation: dash 1.5s linear infinite; }
       @keyframes dash { to { stroke-dashoffset: -20; } }
-      .chip { rx: 4; ry: 4; fill: #ffffff; stroke-width: 1; }
     </style>
   </defs>
 
-  <!-- Background -->
-  <rect width="1100" height="680" fill="#ffffff" rx="16" />
+  <!-- Background Base Canvas -->
+  <rect width="1280" height="840" fill="url(#canvas-bg)" rx="18" stroke="#334155" stroke-width="1.5" />
 
-  <!-- Title -->
-  <text x="550" y="36" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="19" font-weight="700" fill="#0f172a">AI Chat Event-Driven Request &amp; Token Stream Flow</text>
-  <text x="550" y="56" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="12" fill="#64748b">CAP OData Service • BTP Destination Service • Co-located Python Child Process • Llama 3.3 70B</text>
+  <!-- Header Section -->
+  <text x="640" y="42" text-anchor="middle" class="txt-title">End-to-End AI Request &amp; LangGraph Execution Lifecycle</text>
+  <text x="640" y="65" text-anchor="middle" class="txt-sub">From Client HTTP Call ➔ Node.js Edge Gateway ➔ Zero-Latency IPC ➔ LangGraph Agent Pipeline ➔ 4-Destination LLM Failover</text>
 
-  <!-- Component Cards (Increased Y to 95 and Height to 120 so sublabels fit nicely) -->
-  <!-- 1. Client -->
-  <g transform="translate(30, 95)">
-    <rect width="170" height="120" fill="url(#grad-client)" stroke="#bfdbfe" class="node-card" />
-    <text x="85" y="32" text-anchor="middle" class="txt-hdr">Web / Fiori Client</text>
-    <text x="85" y="54" text-anchor="middle" class="txt-lbl">EventSource / fetch()</text>
-    <rect x="15" y="72" width="140" height="26" rx="6" fill="#ffffff" stroke="#93c5fd" />
-    <text x="85" y="89" text-anchor="middle" class="txt-sub">POST /ai/ask/stream</text>
-  </g>
+  <!-- Step 1: Client Ingress (x: 30, w: 220) -->
+  <g transform="translate(30, 95)" filter="url(#soft-shadow)">
+    <rect width="220" height="715" fill="url(#step-grad)" stroke="#475569" stroke-width="1.5" rx="14" />
+    <rect x="15" y="18" width="190" height="34" rx="8" fill="#0f172a" stroke="#64748b" />
+    <text x="110" y="40" text-anchor="middle" class="txt-hdr">1. Client Request</text>
 
-  <!-- 2. CAP Server -->
-  <g transform="translate(250, 95)">
-    <rect width="170" height="120" fill="url(#grad-node)" stroke="#bae6fd" class="node-card" />
-    <text x="85" y="32" text-anchor="middle" class="txt-hdr">Node.js CAP Server</text>
-    <text x="85" y="54" text-anchor="middle" class="txt-lbl">@sap/cds + Express</text>
-    <rect x="15" y="72" width="140" height="26" rx="6" fill="#ffffff" stroke="#7dd3fc" />
-    <text x="85" y="89" text-anchor="middle" class="txt-sub">srv/ai-service.js</text>
-  </g>
-
-  <!-- 3. Destination Service -->
-  <g transform="translate(470, 95)">
-    <rect width="170" height="120" fill="url(#grad-auth)" stroke="#fed7aa" class="node-card" />
-    <text x="85" y="32" text-anchor="middle" class="txt-hdr">BTP Destination</text>
-    <text x="85" y="54" text-anchor="middle" class="txt-lbl">getAIDestination()</text>
-    <rect x="15" y="72" width="140" height="26" rx="6" fill="#ffffff" stroke="#fdba74" />
-    <text x="85" y="89" text-anchor="middle" class="txt-sub">API Key &amp; Base URL</text>
-  </g>
-
-  <!-- 4. Python Process -->
-  <g transform="translate(690, 95)">
-    <rect width="170" height="120" fill="url(#grad-python)" stroke="#bbf7d0" class="node-card" />
-    <text x="85" y="32" text-anchor="middle" class="txt-hdr">Python Worker</text>
-    <text x="85" y="54" text-anchor="middle" class="txt-lbl">stdin / stdout bridge</text>
-    <rect x="15" y="72" width="140" height="26" rx="6" fill="#ffffff" stroke="#86efac" />
-    <text x="85" y="89" text-anchor="middle" class="txt-sub">functions.py --worker</text>
-  </g>
-
-  <!-- 5. AI Service Provider -->
-  <g transform="translate(900, 95)">
-    <rect width="170" height="120" fill="url(#grad-ai)" stroke="#fbcfe8" class="node-card" />
-    <text x="85" y="32" text-anchor="middle" class="txt-hdr">NVIDIA AI Core</text>
-    <text x="85" y="54" text-anchor="middle" class="txt-lbl">Llama 3.3 70B Instruct</text>
-    <rect x="15" y="72" width="140" height="26" rx="6" fill="#ffffff" stroke="#f472b6" />
-    <text x="85" y="89" text-anchor="middle" class="txt-sub">chat/completions</text>
-  </g>
-
-  <!-- Forward Flow Connectors Top (Y=140) -->
-  <!-- 1 -> 2 -->
-  <path d="M 200,140 L 250,140" stroke="#2563eb" stroke-width="2" class="flow-path" marker-end="url(#arr-blue)" />
-  <rect x="211" y="129" width="28" height="22" rx="4" class="chip" stroke="#2563eb" stroke-width="1.5" />
-  <text x="225" y="144" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#2563eb">1</text>
-
-  <!-- 2 -> 3 -->
-  <path d="M 420,140 L 470,140" stroke="#d97706" stroke-width="2" class="flow-path" marker-end="url(#arr-amber)" />
-  <rect x="431" y="129" width="28" height="22" rx="4" class="chip" stroke="#d97706" stroke-width="1.5" />
-  <text x="445" y="144" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#d97706">2</text>
-
-  <!-- 3 -> 4 -->
-  <path d="M 640,140 L 690,140" stroke="#9333ea" stroke-width="2" class="flow-path" marker-end="url(#arr-purple)" />
-  <rect x="651" y="129" width="28" height="22" rx="4" class="chip" stroke="#9333ea" stroke-width="1.5" />
-  <text x="665" y="144" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#9333ea">3</text>
-
-  <!-- 4 -> 5 -->
-  <path d="M 860,140 L 900,140" stroke="#db2777" stroke-width="2" class="flow-path" marker-end="url(#arr-pink)" />
-  <rect x="866" y="129" width="28" height="22" rx="4" class="chip" stroke="#db2777" stroke-width="1.5" />
-  <text x="880" y="144" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#db2777">4</text>
-
-  <!-- SSE Token Stream Return Arc (Dipping cleanly to Y=255, completely clear of component cards and table) -->
-  <path d="M 985,215 L 985,255 L 115,255 L 115,215" stroke="#16a34a" stroke-width="2.5" fill="none" stroke-dasharray="6,4" class="flow-path" marker-end="url(#arr-green)" />
-
-  <!-- Central SSE Stream Label Box positioned on the horizontal segment (Y=255) -->
-  <rect x="420" y="242" width="260" height="26" rx="13" fill="#16a34a" stroke="#15803d" stroke-width="1" filter="url(#shadow)" />
-  <text x="550" y="259" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">5. Real-Time SSE Token Stream (data: {text})</text>
-
-  <!-- Steps Table Container (Moved down to Y=310) -->
-  <g transform="translate(30, 310)">
-    <rect width="1040" height="340" fill="#f8fafc" stroke="#e2e8f0" rx="14" filter="url(#shadow)" />
-    
-    <!-- Table Header -->
-    <rect width="1040" height="42" fill="#f1f5f9" rx="14" />
-    <text x="520" y="26" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="14" font-weight="700" fill="#0f172a">Execution Sequence &amp; Data Pipeline</text>
-
-    <!-- Column 1 Header -->
-    <text x="50" y="64" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#2563eb">PHASE 1: REQUEST DISPATCH &amp; RPC BINDING</text>
-
-    <!-- Step 1 -->
-    <g transform="translate(50, 78)">
-      <circle cx="12" cy="12" r="12" fill="#2563eb" />
-      <text x="12" y="16" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">1</text>
-      <text x="34" y="16" font-family="Ubuntu, sans-serif" font-size="11" fill="#334155"><tspan font-weight="700" fill="#0f172a">Client Request:</tspan> UI triggers POST /ai/ask/stream with prompt JSON.</text>
+    <!-- Request Types -->
+    <g transform="translate(15, 68)">
+      <rect width="190" height="95" rx="8" fill="#0f172a" stroke="#334155" />
+      <text x="15" y="24" class="txt-hdr" fill="#38bdf8">AI Ingress Endpoints</text>
+      <text x="15" y="44" class="txt-code">POST /ai/ask</text>
+      <text x="15" y="64" class="txt-code">POST /ai/ask_rag</text>
+      <text x="15" y="84" class="txt-code">POST /ai/ask_agent</text>
     </g>
 
-    <!-- Step 2 -->
-    <g transform="translate(50, 114)">
-      <circle cx="12" cy="12" r="12" fill="#2563eb" />
-      <text x="12" y="16" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">2</text>
-      <text x="34" y="16" font-family="Ubuntu, sans-serif" font-size="11" fill="#334155"><tspan font-weight="700" fill="#0f172a">CAP Interceptor:</tspan> Node.js sets text/event-stream headers and flushes connection.</text>
+    <g transform="translate(15, 178)">
+      <rect width="190" height="90" rx="8" fill="#0f172a" stroke="#334155" />
+      <text x="15" y="24" class="txt-hdr" fill="#fb923c">Streaming Endpoint</text>
+      <text x="15" y="46" class="txt-code">POST /ai/ask/stream</text>
+      <text x="15" y="68" class="txt-dim">Server-Sent Events (SSE)</text>
+      <text x="15" y="84" class="txt-dim">text/event-stream chunks</text>
     </g>
 
-    <!-- Step 3 -->
-    <g transform="translate(50, 150)">
-      <circle cx="12" cy="12" r="12" fill="#d97706" />
-      <text x="12" y="16" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">3</text>
-      <text x="34" y="16" font-family="Ubuntu, sans-serif" font-size="11" fill="#334155"><tspan font-weight="700" fill="#0f172a">Destination Lookup:</tspan> Resolves target URL &amp; API key via BTP destination.</text>
+    <g transform="translate(15, 283)">
+      <rect width="190" height="150" rx="8" fill="#0f172a" stroke="#334155" />
+      <text x="15" y="24" class="txt-hdr" fill="#a7f3d0">JSON Payload</text>
+      <text x="15" y="48" class="txt-code">{"prompt": "...",</text>
+      <text x="15" y="68" class="txt-code"> "model": "..."}</text>
+      <text x="15" y="96" class="txt-dim">Auth Header:</text>
+      <text x="15" y="114" class="txt-code">Authorization: Bearer</text>
+      <text x="15" y="132" class="txt-dim">&lt;XSUAA JWT Token&gt;</text>
     </g>
 
-    <!-- Step 4 -->
-    <g transform="translate(50, 186)">
-      <circle cx="12" cy="12" r="12" fill="#9333ea" />
-      <text x="12" y="16" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">4</text>
-      <text x="34" y="16" font-family="Ubuntu, sans-serif" font-size="11" fill="#334155"><tspan font-weight="700" fill="#0f172a">Process IPC:</tspan> srv/python.js writes JSON-RPC request payload to stdin.</text>
-    </g>
-
-    <!-- Step 5 -->
-    <g transform="translate(50, 222)">
-      <circle cx="12" cy="12" r="12" fill="#db2777" />
-      <text x="12" y="16" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">5</text>
-      <text x="34" y="16" font-family="Ubuntu, sans-serif" font-size="11" fill="#334155"><tspan font-weight="700" fill="#0f172a">Outbound Stream:</tspan> Python worker initiates HTTP POST with stream=True.</text>
-    </g>
-
-    <!-- Divider Line -->
-    <line x1="530" y1="56" x2="530" y2="320" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4,4" />
-
-    <!-- Column 2 Header -->
-    <text x="560" y="64" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#16a34a">PHASE 2: REAL-TIME TOKEN STREAMING &amp; DISPATCH</text>
-
-    <!-- Step 6 -->
-    <g transform="translate(560, 78)">
-      <circle cx="12" cy="12" r="12" fill="#db2777" />
-      <text x="12" y="16" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">6</text>
-      <text x="34" y="16" font-family="Ubuntu, sans-serif" font-size="11" fill="#334155"><tspan font-weight="700" fill="#0f172a">LLM Generation:</tspan> NVIDIA AI Core streams token deltas as SSE data chunks.</text>
-    </g>
-
-    <!-- Step 7 -->
-    <g transform="translate(560, 114)">
-      <circle cx="12" cy="12" r="12" fill="#16a34a" />
-      <text x="12" y="16" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">7</text>
-      <text x="34" y="16" font-family="Ubuntu, sans-serif" font-size="11" fill="#334155"><tspan font-weight="700" fill="#0f172a">Stdout Relaying:</tspan> Python emits event JSON lines over stdout in real-time.</text>
-    </g>
-
-    <!-- Step 8 -->
-    <g transform="translate(560, 150)">
-      <circle cx="12" cy="12" r="12" fill="#16a34a" />
-      <text x="12" y="16" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">8</text>
-      <text x="34" y="16" font-family="Ubuntu, sans-serif" font-size="11" fill="#334155"><tspan font-weight="700" fill="#0f172a">Node Buffer Flush:</tspan> Node maps request ID and pushes data delta to client.</text>
-    </g>
-
-    <!-- Step 9 -->
-    <g transform="translate(560, 186)">
-      <circle cx="12" cy="12" r="12" fill="#475569" />
-      <text x="12" y="16" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">9</text>
-      <text x="34" y="16" font-family="Ubuntu, sans-serif" font-size="11" fill="#334155"><tspan font-weight="700" fill="#0f172a">Completion:</tspan> Stream finishes; Node sends data: [done] and closes connection.</text>
+    <g transform="translate(15, 448)">
+      <rect width="190" height="245" rx="8" fill="#022c22" stroke="#059669" />
+      <text x="15" y="26" class="txt-hdr" fill="#6ee7b7">Client Expectations</text>
+      <text x="15" y="52" class="txt-dim">• Direct completion: &lt; 2s</text>
+      <text x="15" y="74" class="txt-dim">• Cached completion: &lt; 5ms</text>
+      <text x="15" y="96" class="txt-dim">• SSE time-to-first-token: &lt; 400ms</text>
+      <text x="15" y="118" class="txt-dim">• Grounded catalog answers</text>
+      <text x="15" y="140" class="txt-dim">• Zero jailbreak vulnerability</text>
+      <text x="15" y="162" class="txt-code">Content-Type: app/json</text>
+      <text x="15" y="184" class="txt-code">X-RateLimit: 15/min</text>
     </g>
   </g>
+
+  <!-- Step 2: Node.js Edge Gateway (x: 275, w: 235) -->
+  <g transform="translate(275, 95)" filter="url(#soft-shadow)">
+    <rect width="235" height="715" fill="url(#gateway-grad)" stroke="#2dd4bf" stroke-width="1.5" rx="14" />
+    <rect x="15" y="18" width="205" height="34" rx="8" fill="#042f2e" stroke="#14b8a6" />
+    <text x="117" y="40" text-anchor="middle" class="txt-hdr" fill="#ffffff">2. Node.js Gateway</text>
+
+    <!-- Subcard 1: Rate Limiting & Auth -->
+    <g transform="translate(15, 68)">
+      <rect width="205" height="110" rx="8" fill="#042f2e" stroke="#14b8a6" />
+      <text x="15" y="24" class="txt-hdr" fill="#5eead4">Security Gatekeeper</text>
+      <text x="15" y="44" class="txt-dim">• Sliding rate limit (15 req/min)</text>
+      <text x="15" y="62" class="txt-dim">• Helmet CSP &amp; CORS validation</text>
+      <text x="15" y="80" class="txt-dim">• XSUAA JWT signature check</text>
+      <text x="15" y="98" class="txt-code">srv/server.js</text>
+    </g>
+
+    <!-- Subcard 2: Auto Destination Select -->
+    <g transform="translate(15, 193)">
+      <rect width="205" height="135" rx="8" fill="#042f2e" stroke="#14b8a6" />
+      <text x="15" y="24" class="txt-hdr" fill="#5eead4">Auto-Destination Resolution</text>
+      <text x="15" y="46" class="txt-dim">• @sap-cloud-sdk/connectivity</text>
+      <text x="15" y="66" class="txt-dim">• Auto-queries BTP destination</text>
+      <text x="15" y="86" class="txt-dim">• Ingests URL &amp; API Key</text>
+      <text x="15" y="106" class="txt-dim">• In-memory caching</text>
+      <text x="15" y="124" class="txt-code">srv/ai-destination.js</text>
+    </g>
+
+    <!-- Subcard 3: Zero-Latency IPC Bridge -->
+    <g transform="translate(15, 343)">
+      <rect width="205" height="160" rx="8" fill="#042f2e" stroke="#14b8a6" />
+      <text x="15" y="24" class="txt-hdr" fill="#5eead4">Zero-Latency IPC Bridge</text>
+      <text x="15" y="46" class="txt-dim">• Single persistent Python proc</text>
+      <text x="15" y="66" class="txt-dim">• Stdin newline JSON-RPC</text>
+      <text x="15" y="86" class="txt-dim">• Stdout JSON / SSE chunks</text>
+      <text x="15" y="106" class="txt-dim">• 0ms cold start per request</text>
+      <text x="15" y="126" class="txt-dim">• Ping / pong health check</text>
+      <text x="15" y="146" class="txt-code">srv/python.js</text>
+    </g>
+
+    <!-- Subcard 4: Probe Responses -->
+    <g transform="translate(15, 518)">
+      <rect width="205" height="175" rx="8" fill="#042f2e" stroke="#14b8a6" />
+      <text x="15" y="24" class="txt-hdr" fill="#5eead4">Probes Monitoring</text>
+      <text x="15" y="48" class="txt-code">GET /healthz</text>
+      <text x="15" y="66" class="txt-dim">➔ {"status":"OK"}</text>
+      <text x="15" y="94" class="txt-code">GET /readyz</text>
+      <text x="15" y="112" class="txt-dim">➔ {"status":"READY",</text>
+      <text x="15" y="130" class="txt-dim">   "python":"OK"}</text>
+      <text x="15" y="156" class="txt-code">Kubernetes / CF Probes</text>
+    </g>
+  </g>
+
+  <!-- Step 3: Python LangGraph Agent Subsystems (x: 535, w: 450) -->
+  <g transform="translate(535, 95)" filter="url(#soft-shadow)">
+    <rect width="450" height="715" fill="url(#step-grad)" stroke="#60a5fa" stroke-width="1.5" rx="14" />
+    <rect x="20" y="18" width="410" height="34" rx="8" fill="#0f172a" stroke="#38bdf8" />
+    <text x="225" y="40" text-anchor="middle" class="txt-hdr" fill="#38bdf8">3. Python LangGraph Agent Execution Pipeline</text>
+
+    <!-- Subsystem A -->
+    <g transform="translate(15, 68)">
+      <rect width="420" height="78" rx="8" fill="#0f172a" stroke="#38bdf8" />
+      <text x="15" y="24" class="txt-hdr" fill="#67e8f9">🛡️ Phase A: Defense-in-Depth Input Guardrails</text>
+      <text x="15" y="46" class="txt-dim">Direct &amp; indirect prompt injection scanner • Jailbreak signature detector</text>
+      <text x="15" y="66" class="txt-code">PII Redaction: Emails, Cards, JWTs, API Keys automatically masked</text>
+    </g>
+
+    <!-- Subsystem B -->
+    <g transform="translate(15, 156)">
+      <rect width="420" height="78" rx="8" fill="#0f172a" stroke="#38bdf8" />
+      <text x="15" y="24" class="txt-hdr" fill="#67e8f9">⚡ Phase B: Enterprise Redis Prompt Cache Lookup</text>
+      <text x="15" y="46" class="txt-dim">SHA-256 (model:prompt) key signature check against SAP BTP redis-instance</text>
+      <text x="15" y="66" class="txt-code">&lt; 5ms Cached Response Hit ➔ Skips LLM invocation (1h TTL)</text>
+    </g>
+
+    <!-- Subsystem C -->
+    <g transform="translate(15, 244)">
+      <rect width="420" height="88" rx="8" fill="#0f172a" stroke="#38bdf8" />
+      <text x="15" y="24" class="txt-hdr" fill="#34d399">📐 Phase C: SAP HANA Cloud Vector RAG Engine</text>
+      <text x="15" y="46" class="txt-dim">REAL_VECTOR(1536) Embeddings ➔ COSINE_SIMILARITY() catalog query</text>
+      <text x="15" y="66" class="txt-dim">Context Token Compression: Normalizes whitespace &amp; limits context (50%+ token savings)</text>
+      <text x="15" y="82" class="txt-code">python/agent/rag.py</text>
+    </g>
+
+    <!-- Subsystem D -->
+    <g transform="translate(15, 342)">
+      <rect width="420" height="88" rx="8" fill="#0f172a" stroke="#38bdf8" />
+      <text x="15" y="24" class="txt-hdr" fill="#a78bfa">🧠 Phase D: LangGraph Stateful Agent Workflow</text>
+      <text x="15" y="46" class="txt-dim">StateGraph pipeline: Preserves chat_history across multi-turn user conversations</text>
+      <text x="15" y="66" class="txt-dim">Tool Nodes: Dynamic catalog stock validation &amp; discount calculation tools</text>
+      <text x="15" y="82" class="txt-code">python/agent/graph.py</text>
+    </g>
+
+    <!-- Subsystem E -->
+    <g transform="translate(15, 440)">
+      <rect width="420" height="135" rx="8" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5" />
+      <text x="15" y="24" class="txt-hdr" fill="#fbbf24">🔄 Phase E: Multi-Model Router &amp; Failover Cascade</text>
+      <text x="15" y="46" class="txt-dim">Automated failover chain across the 4 configured SAP BTP model destinations:</text>
+      
+      <rect x="15" y="58" width="88" height="28" rx="4" fill="#064e3b" stroke="#34d399" />
+      <text x="59" y="76" text-anchor="middle" class="txt-dim" fill="#a7f3d0">1. Gemma 26B</text>
+
+      <text x="110" y="77" class="txt-hdr" fill="#94a3b8">➔</text>
+
+      <rect x="122" y="58" width="85" height="28" rx="4" fill="#0c4a6e" stroke="#38bdf8" />
+      <text x="164" y="76" text-anchor="middle" class="txt-dim" fill="#bae6fd">2. Gemma 31B</text>
+
+      <text x="214" y="77" class="txt-hdr" fill="#94a3b8">➔</text>
+
+      <rect x="226" y="58" width="80" height="28" rx="4" fill="#4c1d95" stroke="#c084fc" />
+      <text x="266" y="76" text-anchor="middle" class="txt-dim" fill="#e9d5ff">3. GLM 5.2</text>
+
+      <text x="313" y="77" class="txt-hdr" fill="#94a3b8">➔</text>
+
+      <rect x="325" y="58" width="80" height="28" rx="4" fill="#7c2d12" stroke="#ea580c" />
+      <text x="365" y="76" text-anchor="middle" class="txt-dim" fill="#fed7aa">4. Mistral</text>
+
+      <text x="15" y="105" class="txt-dim">• Exponential Backoff: Retries failed calls (1s ➔ 2s ➔ 4s delays)</text>
+      <text x="15" y="123" class="txt-code">python/agent/llm_router.py</text>
+    </g>
+
+    <!-- Subsystem F -->
+    <g transform="translate(15, 585)">
+      <rect width="420" height="108" rx="8" fill="#042f2e" stroke="#14b8a6" />
+      <text x="15" y="24" class="txt-hdr" fill="#a7f3d0">🛡️ Phase F: Output Guardrails &amp; Response Serialization</text>
+      <text x="15" y="46" class="txt-dim">• Output Groundedness Validator: Verifies content stays within bookshop domain</text>
+      <text x="15" y="66" class="txt-dim">• Competitor Name Redactor: Filters out forbidden competitor brands</text>
+      <text x="15" y="86" class="txt-dim">• Asynchronous LangSmith Telemetry Tracing logged in background</text>
+      <text x="15" y="102" class="txt-code">Emits JSON response / SSE token chunks over stdout</text>
+    </g>
+  </g>
+
+  <!-- Step 4: BTP Destinations & Models (x: 1010, w: 240) -->
+  <g transform="translate(1010, 95)" filter="url(#soft-shadow)">
+    <rect width="240" height="715" fill="url(#step-grad)" stroke="#ea580c" stroke-width="1.5" rx="14" />
+    <rect x="15" y="18" width="210" height="34" rx="8" fill="#431407" stroke="#f97316" />
+    <text x="120" y="40" text-anchor="middle" class="txt-hdr" fill="#fed7aa">4. BTP Destinations</text>
+
+    <!-- P1 Model Card -->
+    <g transform="translate(15, 68)">
+      <rect width="210" height="145" rx="8" fill="#064e3b" stroke="#34d399" stroke-width="1.5" />
+      <text x="15" y="24" class="txt-hdr" fill="#a7f3d0">🥇 Priority 1 (Primary)</text>
+      <text x="15" y="46" class="txt-body">google-diffusiongemma</text>
+      <text x="15" y="66" class="txt-code" fill="#6ee7b7">diffusiongemma-26b</text>
+      <text x="15" y="86" class="txt-dim">Top choice for creative</text>
+      <text x="15" y="104" class="txt-dim">and structured responses</text>
+      <text x="15" y="128" class="txt-code">NVIDIA Foundation</text>
+    </g>
+
+    <!-- P2 Model Card -->
+    <g transform="translate(15, 223)">
+      <rect width="210" height="145" rx="8" fill="#0c4a6e" stroke="#38bdf8" stroke-width="1.5" />
+      <text x="15" y="24" class="txt-hdr" fill="#bae6fd">🥈 Priority 2 (P2)</text>
+      <text x="15" y="46" class="txt-body">google-gemma-4-31b-it</text>
+      <text x="15" y="66" class="txt-code" fill="#7dd3fc">gemma-4-31b-it</text>
+      <text x="15" y="86" class="txt-dim">High reasoning capability</text>
+      <text x="15" y="104" class="txt-dim">and instruction accuracy</text>
+      <text x="15" y="128" class="txt-code">NVIDIA Foundation</text>
+    </g>
+
+    <!-- P3 Model Card -->
+    <g transform="translate(15, 378)">
+      <rect width="210" height="145" rx="8" fill="#4c1d95" stroke="#c084fc" stroke-width="1.5" />
+      <text x="15" y="24" class="txt-hdr" fill="#e9d5ff">🥉 Priority 3</text>
+      <text x="15" y="46" class="txt-body">z-ai-glm-5-2</text>
+      <text x="15" y="66" class="txt-code" fill="#d8b4fe">z-ai/glm-5.2</text>
+      <text x="15" y="86" class="txt-dim">Speed &amp; general knowledge</text>
+      <text x="15" y="104" class="txt-dim">secondary fallback target</text>
+      <text x="15" y="128" class="txt-code">NVIDIA Foundation</text>
+    </g>
+
+    <!-- P4 Fallback Model Card -->
+    <g transform="translate(15, 533)">
+      <rect width="210" height="160" rx="8" fill="#7c2d12" stroke="#ea580c" stroke-width="1.5" />
+      <text x="15" y="24" class="txt-hdr" fill="#fed7aa">🛡️ Priority 4 (Fallback)</text>
+      <text x="15" y="46" class="txt-body">mistralai-mistral</text>
+      <text x="15" y="66" class="txt-code" fill="#fdba74">mistral-nemotron</text>
+      <text x="15" y="86" class="txt-dim">Designated safety fallback</text>
+      <text x="15" y="104" class="txt-dim">guarantees zero-downtime</text>
+      <text x="15" y="124" class="txt-dim">catalog assistance</text>
+      <text x="15" y="146" class="txt-code">NVIDIA Foundation</text>
+    </g>
+  </g>
+
+  <!-- Connectors -->
+  <path d="M 250,220 L 275,220" stroke="#2dd4bf" stroke-width="2.5" class="flow-line" marker-end="url(#arr-teal)" />
+  <path d="M 510,220 L 535,220" stroke="#38bdf8" stroke-width="2.5" class="flow-line" marker-end="url(#arr-blue)" />
+  <path d="M 985,500 L 1010,500" stroke="#fbbf24" stroke-width="2.5" class="flow-line" marker-end="url(#arr-amber)" />
+
 </svg>

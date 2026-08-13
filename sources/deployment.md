@@ -2,13 +2,13 @@
 
 ## Deployment Modes
 
-### 1. Production Mode (SAP BTP Cloud Foundry)
+### 1. Production Mode (SAP BTP Cloud Foundry Multi-Buildpack)
 
 #### Prerequisites
 - SAP BTP subaccount with Cloud Foundry runtime
-- XSUAA, Destination, and HANA services provisioned
-- Cloud Foundry CLI installed and logged in
-- Multi-buildpack enabled in org space
+- Services provisioned: `xsuaa`, `destination`, `hana` (HDI-shared), `redis-instance`
+- Cloud Foundry CLI (`cf`) installed and logged in
+- Multi-buildpack enabled space
 
 #### Deployment Steps
 
@@ -17,27 +17,23 @@
 git clone https://github.com/yourusername/bookshop-multi-buildpack.git
 cd bookshop-multi-buildpack
 
-# 2. Install dependencies
+# 2. Install dependencies & build CDS models
 npm install
+npx cds build --production
 
-# 3. Build documentation site
-npm run build
+# 3. Deploy HDI artifacts to SAP HANA Cloud
+npm run deploy:cf:hana
 
-# 4. Create services in BTP
-cf create-service xsuaa application bookshop-xsuaa -c xs-security.json
-cf create-service destination lite bookshop-destination
-cf create-service hana cloud hdi-shared bookshop-hana
-
-# 5. Deploy application
-cf push bookshop-multi-buildpack
+# 4. Deploy multi-buildpack application droplet (512 MB)
+cf push
 ```
 
-#### Manifest.yml (Production)
+#### Production `manifest.yml`
 ```yaml
-# Cloud Foundry Multi-Buildpack Manifest
 applications:
   - name: bookshop-multi-buildpack
     memory: 512M
+    disk_quota: 1024M
     buildpacks:
       - python_buildpack
       - nodejs_buildpack
@@ -45,152 +41,102 @@ applications:
     routes:
       - route: bookshop-multi-buildpack.cfapps.us10-003.hana.ondemand.com
     health-check-type: http
-    health-check-http-endpoint: /health
+    health-check-http-endpoint: /healthz
     timeout: 180
     env:
       PYTHON_BIN: python3
       NODE_ENV: production
-      AI_MODEL: meta/llama-3.3-70b-instruct
-      AI_TIMEOUT: "900"
+      AI_DESTINATION: google-diffusiongemma-26b-a4b-it
     services:
-      - bookshop-multi-buildpack-db
-      - destination-service
-      - bookshop-multi-buildpack-uaa
+      - bookshop-hana
+      - bookshop-destination
+      - bookshop-xsuaa
+      - bookshop-redis
 ```
 
-### 2. Local Mode (Developer Machine)
+---
+
+### 2. Local Mode (Developer Workstation)
 
 #### Prerequisites
-- Node.js 18+ installed
-- Python 3.10+ installed
-- npm installed
+- Node.js 18+ or 20+
+- Python 3.10+ with `pip`
+- SQLite (for local CAP persistence)
 
 #### Setup
 
 ```bash
-# 1. Clone repository
-git clone https://github.com/yourusername/bookshop-multi-buildpack.git
-cd bookshop-multi-buildpack
-
-# 2. Install Node.js dependencies
+# 1. Install Node.js dependencies
 npm install
 
-# 3. Install Python dependencies
-cd backend
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-pip install -r requirements.txt
+# 2. Set up Python virtual environment
+python3 -m venv python/venv
+source python/venv/bin/activate   # On Windows: python\venv\Scripts\activate
+pip install -r python/requirements.txt
 
-# 4. Configure environment
-cp .env.example .env
-# Edit .env with local values
+# 3. Initialize SQLite local database with mock data
+npx cds deploy --to sqlite
 
-# 5. Start Python backend (Terminal 1)
-cd backend
-python main.py
-
-# 6. Start Node.js server (Terminal 2)
+# 4. Start local development server
+# Node.js automatically spawns python/functions.py --worker via stdio
 npm start
 
-# 7. Access application
-# http://localhost:3000
+# 5. Application is accessible at:
+# http://localhost:4004
 ```
 
-#### Local docker-compose.yml (Optional)
-```yaml
-version: '3.8'
-services:
-  app:
-    build: .
-    ports:
-      - "8080:8080"
-    environment:
-      - NODE_ENV=development
-      - PYTHON_SERVICE_URL=http://python:5000
-    depends_on:
-      - python
+---
 
-  python:
-    build: ./backend
-    ports:
-      - "5000:5000"
-    environment:
-      - FLASK_ENV=development
-```
-
-### 3. Hybrid Mode
+### 3. Hybrid Mode (Local Node.js + Remote BTP Services)
 
 #### Architecture
 ```
-┌──────────────┐      HTTPS       ┌──────────────────┐
-│   Local Dev  │ ◄──────────────► │ BTP Cloud Foundry│
-│   Node.js    │                  │ Python Backend   │
-│   :3000      │                  │ (deployed)       │
-└──────────────┘                  └──────────────────┘
+┌─────────────────────────────────┐           BTP Service Bindings           ┌─────────────────────────────┐
+│  Local Workstation              │ ───────────────────────────────────────► │  SAP BTP Cloud Services     │
+│  - CAP Server (:4004)           │      VCAP_SERVICES / @sap-cloud-sdk      │  - SAP HANA Cloud (Vectors) │
+│  - Co-located Python Worker     │                                          │  - BTP Destination Service  │
+│  - Local Debugger & Hot Reload  │                                          │  - BTP Redis Cache Instance │
+└─────────────────────────────────┘                                          └─────────────────────────────┘
 ```
 
 #### Setup
 
 ```bash
-# 1. Deploy Python backend to BTP
-cd backend
-cf push bookshop-python-backend \
-  -b python_buildpack \
-  -m 256M \
-  -c "gunicorn main:app"
+# 1. Bind local CAP server to remote BTP services
+npx cds bind -2 bookshop-hana:bookshop-hana-key
+npx cds bind -2 bookshop-destination:bookshop-dest-key
 
-# 2. Note the Python URL (e.g., https://bookshop-python.cfapps.us10...)
-
-# 3. Configure local Node.js
-# In .env:
-PYTHON_SERVICE_URL=https://bookshop-python.cfapps.us10-001.hana.ondemand.com
-UAA_SERVER_URL=https://your-xsuaa.authentication.sap.hana.ondemand.com
-UAA_CLIENT_ID=bookshop-multi-buildpack!t1234
-UAA_CLIENT_SECRET=<your-secret>
-
-# 4. Start local Node.js
-npm start
+# 2. Run hybrid development server
+npx cds watch --profile hybrid
 ```
 
-#### Route Service Configuration
-```javascript
-// Ensure XSUAA tokens are forwarded
-const xss = require('@sap/xssec');
-const destination = await getDestination({ destinationName: 'python-service' });
-
-// Forward auth header
-const authHeader = req.headers.authorization;
-const pythonResponse = await axios.post(
-  `${PYTHON_SERVICE_URL}/api/action`,
-  payload,
-  { headers: { Authorization: authHeader } }
-);
-```
+---
 
 ## Environment Comparison
 
 ![Deployment Modes](assets/diagrams/deployment-modes.svg)
 
-## Monitoring
+---
 
-### Health Check Endpoints
+## Health Probes & Monitoring
+
+### Health & Readiness Probes
 ```bash
-# Node.js
-curl http://localhost:8080/health
+# System & CAP Memory Health Probe
+curl http://localhost:4004/healthz
+# Response: {"status":"OK","uptime":128.4,"memory":{"rss":"64MB"}}
 
-# Python
-curl http://localhost:5000/api/health
+# Python IPC Channel & Worker Readiness Probe
+curl http://localhost:4004/readyz
+# Response: {"status":"READY","python":"OK"}
 ```
 
-### Cloud Foundry Logs
+### Cloud Foundry Logs & Telemetry
 ```bash
+# Stream real-time logs from Cloud Foundry
 cf logs bookshop-multi-buildpack --recent
-cf logs bookshop-multi-buildpack
-```
 
-### Application Metrics
-- Response time (p50, p95, p99)
-- Error rate
-- Python process memory/CPU
-- AI request latency
-- Database query performance
+# Trace LangSmith agent executions in real-time
+export LANGCHAIN_TRACING_V2=true
+export LANGCHAIN_API_KEY=<your-langsmith-key>
+```

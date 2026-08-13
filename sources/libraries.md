@@ -1,87 +1,54 @@
 # Libraries and Dependencies
 
-## Node.js Dependencies (package.json)
+## Node.js Dependencies (`package.json`)
 
 ### Runtime Dependencies
 
 | Package | Version | Purpose |
 |---------|---------|---------|
-| `express` | ^4.18.2 | Web framework |
-| `@sap/cds` | ^7.0.0 | SAP Cloud Application Programming Model |
-| `@sap/xssec` | ^3.2.0 | XSUAA JWT validation |
-| `@sap/xsenv` | ^3.1.0 | Environment variable management |
-| `@sap-cloud-sdk/connectivity` | ^3.0.0 | Destination service client |
-| `axios` | ^1.6.0 | HTTP client for Python calls |
-| `axios-retry` | ^4.0.0 | Retry logic for Python calls |
-| `cors` | ^2.8.5 | Cross-origin resource sharing |
-| `helmet` | ^7.1.0 | Security headers |
-| `express-rate-limit` | ^7.1.0 | Rate limiting |
-| `morgan` | ^1.10.0 | HTTP request logging |
-| `dotenv` | ^16.3.1 | Environment variable loading |
-| `@hapi/boom` | ^10.0.0 | Error handling utilities |
+| `@sap/cds` | `^10.0.5` | SAP Cloud Application Programming Model (OData V4, CQL, service gateway) |
+| `@sap-cloud-sdk/connectivity` | `^4.8.0` | Zero-hardcoding BTP Destination Auto-Selection Engine |
+| `@sap-cloud-sdk/http-client` | `^4.8.0` | Authenticated outbound HTTP via BTP Destinations |
+| `@sap-cloud-sdk/resilience` | `^4.8.0` | Resilient HTTP (timeouts, retries) for destination calls |
+| `@cap-js/hana` | `^3.0.2` | SAP HANA Cloud DB adapter for CDS |
 
-### Development Dependencies
+### Dev Dependencies
 
 | Package | Version | Purpose |
 |---------|---------|---------|
-| `jest` | ^29.7.0 | Unit testing framework |
-| `supertest` | ^6.3.3 | API integration testing |
-| `eslint` | ^8.50.0 | Code linting |
-| `prettier` | ^3.0.3 | Code formatting |
+| `@cap-js/sqlite` | `^3.0.2` | In-memory SQLite for local dev/testing (no HANA needed) |
+| `@sap/cds-dk` | `^10.0.7` | `cds` CLI — build, deploy, watch |
+| `@sap/hdi-deploy` | `^5.7.0` | SAP HANA HDI container deployer |
 
-## Python Dependencies (requirements.txt)
+---
 
-### Core Dependencies
+## Python Dependencies (`python/requirements.txt`)
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| `flask` | ^3.0.0 | Web framework for Python backend |
-| `flask-cors` | ^4.0.0 | CORS support for Flask |
-| `requests` | ^2.31.0 | HTTP client for outbound calls |
-| `numpy` | ^1.24.0 | Numerical computing |
-| `pandas` | ^2.1.0 | Data manipulation |
-| `scikit-learn` | ^1.3.0 | ML model library |
-| `PyJWT` | ^2.8.0 | JWT token validation |
-| `python-dotenv` | ^1.0.0 | Environment variables |
-| `gunicorn` | ^21.2.0 | WSGI HTTP server |
-
-### AI/ML Dependencies
+### LangChain / LangGraph / LangSmith Ecosystem
 
 | Package | Version | Purpose |
 |---------|---------|---------|
-| `openai` | ^1.3.0 | OpenAI API client |
-| `tensorflow` | ^2.14.0 | Deep learning framework |
-| `transformers` | ^4.35.0 | Hugging Face models |
-| `sentence-transformers` | ^2.2.0 | Text embeddings |
+| `langchain` | `>=0.3.0` | Prompt templates, chain construction, LLM I/O |
+| `langchain-core` | `>=0.3.0` | Core LangChain primitives (RunnableSequence, ChatMessages) |
+| `langchain-community` | `>=0.3.0` | Community integrations (HanaDB VectorStore) |
+| `langchain-openai` | `>=0.2.0` | ChatOpenAI wrapper for NVIDIA API-compatible endpoints |
+| `langgraph` | `>=0.2.0` | Stateful multi-node agent StateGraph orchestration |
+| `langsmith` | `>=0.1.0` | Real-time LLM observability & prompt chain tracing (optional, no-op if keys not set) |
 
-### Development Dependencies
+### SAP HANA Cloud & Vector Engine
 
 | Package | Version | Purpose |
 |---------|---------|---------|
-| `pytest` | ^7.4.0 | Testing framework |
-| `pytest-cov` | ^4.1.0 | Coverage reporting |
-| `black` | ^23.0.0 | Code formatting |
-| `flake8` | ^6.1.0 | Linting |
+| `hdbcli` | `>=2.20.0` | SAP HANA Cloud Python client for `REAL_VECTOR(1536)` embeddings & `COSINE_SIMILARITY()` search |
 
-## Library Rationale
+### Enterprise Prompt Caching
 
-### Why Express over Fastify/Koa?
-- Mature ecosystem with SAP CAP integration
-- Extensive middleware support (CORS, rate limiting, helmet)
-- Team familiarity and community support
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `redis` | `>=5.0.0` | SAP BTP `redis-instance` client for prompt/response caching (< 5ms TTL lookups) |
 
-### Why Flask over FastAPI/Django?
-- Lightweight, easy to embed in server.js
-- Sufficient for ML proxy endpoints
-- Minimal overhead alongside Node.js
+### HTTP & Streaming
 
-### Why Axios over Fetch?
-- Automatic JSON serialization
-- Built-in timeout support
-- Interceptor support for auth token injection
-- Better error handling
-
-### Why Jest over Mocha/Vitest?
-- Official SAP BTP stack preference
-- Built-in mocking and coverage
-- Excellent TypeScript support
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `httpx` | `>=0.27.0` | Async HTTP streaming client (SSE token streaming to `/ai/ask/stream`) |

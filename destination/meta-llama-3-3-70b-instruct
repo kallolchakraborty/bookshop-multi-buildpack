@@ -1,0 +1,12 @@
+# SAP BTP Destination Configuration File for meta-llama-3-3-70b-instruct
+# Import this file into SAP BTP Cockpit -> Connectivity -> Destinations
+Name=meta-llama-3-3-70b-instruct
+Type=HTTP
+URL=https\://integrate.api.nvidia.com/v1
+Authentication=NoAuthentication
+ProxyType=Internet
+Description=NVIDIA AI Foundation API for Meta Llama 3.3 70B Instruct LLM
+URL.headers.Authorization=Bearer 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
+APIKeyHeaderName=Authorization
+APIKey=Bearer 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
+Model=meta/llama-3.3-70b-instruct

@@ -1,7 +1,20 @@
-ID,title,author_ID,stock,price
-201,Wuthering Heights,101,12,20.00
-207,Jane Eyre,107,11,12.00
-251,The Raven,150,333,5.99
-252,Eleonora,150,555,3.99
-253,The Bestseller,170,5,10.00
-271,Catweazle,170,22,15.99
+ID,title,author_ID,stock,price,descr
+201,Wuthering Heights,101,12,20.00,"A classic tale of passion and revenge set on the Yorkshire moors between Heathcliff and Catherine Earnshaw."
+207,Jane Eyre,107,11,12.00,"An iconic classic novel following the emotional and moral growth of an orphaned young woman."
+251,The Raven,150,333,5.99,"A famous dark poem reflecting lost love, grief, and mysterious midnight encounters with a talking raven."
+252,Eleonora,150,555,3.99,"A romantic gothic short story exploring intense love, loss, and unearthly vows."
+253,The Bestseller,170,5,10.00,"A thrilling contemporary bestseller exploring corporate intrigue, high-stakes finance, and modern strategy."
+271,Catweazle,170,22,15.99,"A humorous fantasy novel about an 11th-century wizard who accidentally time travels to modern times."
+301,The Hobbit,201,45,24.99,"A fantasy classic epic adventure of Bilbo Baggins travelling with dwarves to reclaim their mountain kingdom from Smaug."
+302,The Fellowship of the Ring,201,30,29.99,"The first volume of the legendary high fantasy epic Lord of the Rings detailing the journey to destroy the One Ring."
+303,A Game of Thrones,202,60,27.50,"An epic fantasy story of noble families competing for control of the Iron Throne of Westeros."
+304,Dune,203,85,22.00,"A sci-fi masterpiece set on the desert planet Arrakis involving spice melange, political feudalism, and destiny."
+305,Foundation,204,40,18.50,"A seminal science fiction novel introducing psychohistory and the fall of a galactic empire."
+306,2001 A Space Odyssey,205,25,16.99,"A legendary sci-fi exploration of human evolution, space travel, alien monoliths, and AI supercomputer HAL 9000."
+307,Pride and Prejudice,206,50,14.99,"A beloved classic romantic drama following Elizabeth Bennet and Mr. Darcy as they navigate class and pride."
+308,The Great Gatsby,207,35,13.50,"A classic Jazz Age novel portraying Jay Gatsby's unrequited love and the American Dream in Long Island."
+309,1984,208,100,15.00,"A classic dystopian masterpiece exploring totalitarian surveillance, Big Brother, and truth control."
+310,Frankenstein,209,28,11.99,"A classic gothic horror novel detailing Victor Frankenstein's creation of a living creature and its consequences."
+311,The Time Machine,210,18,10.50,"A sci-fi classic introducing a Victorian scientist who travels into the far future to meet the Eloi and Morlocks."
+312,SAP BTP Architecture Guide,211,75,49.99,"A comprehensive technical guide on SAP Business Technology Platform Multi-Buildpack co-location, CAP Node.js, and Python ML worker integration."
+313,Cloud Application Programming Model in Action,212,90,59.99,"An essential guide for enterprise SAP developers building OData V4 services with Node.js, SAP HANA Cloud, and CAP CDS annotations."

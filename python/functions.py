@@ -30,14 +30,14 @@ DISCOUNT_RATES = {
 
 AI_BASE_URL = os.environ.get("AI_BASE_URL", "").rstrip("/")
 AI_API_KEY = os.environ.get("AI_API_KEY", "")
-AI_MODEL = os.environ.get("AI_MODEL", "")
+AI_MODEL = os.environ.get("AI_MODEL", "google/diffusiongemma-26b-a4b-it")
 AI_PATH = os.environ.get("AI_PATH", "/chat/completions")
-AI_TIMEOUT = float(os.environ.get("AI_TIMEOUT", "60"))
+AI_TIMEOUT = float(os.environ.get("AI_TIMEOUT", "900"))
 
-# LLM request parameters; all overridable via environment.
-AI_TEMPERATURE = float(os.environ.get("AI_TEMPERATURE", "0.2"))
-AI_TOP_P = float(os.environ.get("AI_TOP_P", "0.7"))
-AI_MAX_TOKENS = int(os.environ.get("AI_MAX_TOKENS", "1024"))
+# LLM request parameters for Google DiffusionGemma 26B
+AI_TEMPERATURE = float(os.environ.get("AI_TEMPERATURE", "1.0"))
+AI_TOP_P = float(os.environ.get("AI_TOP_P", "0.95"))
+AI_MAX_TOKENS = int(os.environ.get("AI_MAX_TOKENS", "4096"))
 AI_STREAM = os.environ.get("AI_STREAM", "false").lower() in ("1", "true", "yes")
 AI_SYSTEM_PROMPT = os.environ.get(
     "AI_SYSTEM_PROMPT", "You are a concise, helpful bookshop assistant."
@@ -73,6 +73,17 @@ def ask_ai(payload, emit=None):
     """
     prompt = payload.get("prompt", "")
     model = payload.get("model") or AI_MODEL
+
+    # 1. Redis / In-Memory Prompt Cache Lookup for non-streaming queries
+    if emit is None and prompt:
+        try:
+            from python.agent.cache import get_cached_prompt_response
+            cached = get_cached_prompt_response(prompt, model)
+            if cached:
+                return cached
+        except Exception:
+            pass
+
     base_url = payload.get("baseUrl") or AI_BASE_URL
     api_key = payload.get("apiKey") or AI_API_KEY
     if not base_url:
@@ -90,6 +101,9 @@ def ask_ai(payload, emit=None):
         "top_p": AI_TOP_P,
         "max_tokens": AI_MAX_TOKENS,
         "stream": emit is not None,
+        "chat_template_kwargs": {
+            "enable_thinking": True
+        }
     }
     headers = {"Content-Type": "application/json", "Accept": "application/json"}
     if api_key:
@@ -115,11 +129,22 @@ def ask_ai(payload, emit=None):
 
     if not answer:
         raise RuntimeError("AI API returned no answer")
-    return {
+    
+    res = {
         "answer": answer,
         "model": model,
         "latency": int(time.time() * 1000 - started),
     }
+
+    # 2. Redis / In-Memory Prompt Cache Storage for non-streaming queries
+    if emit is None and prompt and answer:
+        try:
+            from python.agent.cache import set_cached_prompt_response
+            set_cached_prompt_response(prompt, model, res)
+        except Exception:
+            pass
+
+    return res
 
 
 def _read_stream(response, emit):
@@ -142,17 +167,30 @@ def _read_stream(response, emit):
             emit(delta)
     return answer
 
+
 def ask_agent(payload, emit=None):
-    """LangGraph + SAP HANA Vector Engine RAG Agent workflow handler."""
+    """LangGraph + SAP HANA Vector Engine RAG Agent workflow handler with Redis Prompt Caching."""
+    prompt = payload.get("prompt", "")
+    model = payload.get("model") or AI_MODEL
+
+    # 1. Check Redis / In-Memory Prompt Cache (Non-streaming queries)
+    if emit is None and prompt:
+        try:
+            from python.agent.cache import get_cached_prompt_response, set_cached_prompt_response
+            cached_res = get_cached_prompt_response(prompt, model)
+            if cached_res:
+                return cached_res
+        except Exception as exc:
+            print(f"[Cache Lookup Warning] {exc}", file=sys.stderr)
+
     try:
         from python.agent.graph import bookshop_graph
         if bookshop_graph is not None:
-            model = payload.get("model") or AI_MODEL
             base_url = (payload.get("baseUrl") or AI_BASE_URL).rstrip("/")
             api_key = payload.get("apiKey") or AI_API_KEY
 
             initial_state = {
-                "user_prompt": payload.get("prompt", ""),
+                "user_prompt": prompt,
                 "model": model,
                 "base_url": base_url,
                 "api_key": api_key,
@@ -173,15 +211,26 @@ def ask_agent(payload, emit=None):
             if emit:
                 for char in answer:
                     emit(char)
-            return {
+
+            result_payload = {
                 "answer": answer,
                 "model": model,
                 "latency": int(time.time() * 1000 - started),
                 "intent": res.get("intent_detected", "general"),
                 "discount_applied": res.get("applied_discount", 0.0),
             }
+
+            # 2. Store in Redis Cache if non-streaming & non-blocked
+            if emit is None and prompt and not res.get("blocked"):
+                try:
+                    from python.agent.cache import set_cached_prompt_response
+                    set_cached_prompt_response(prompt, model, result_payload)
+                except Exception as exc:
+                    print(f"[Cache Store Warning] {exc}", file=sys.stderr)
+
+            return result_payload
     except Exception as exc:
-        print(f"[Agent Fallback] Using ask_ai fallback: {exc}")
+        print(f"[Agent Fallback] Using ask_ai fallback: {exc}", file=sys.stderr)
 
     # Fallback to standard ask_ai if LangGraph/LangChain packages aren't present
     return ask_ai(payload, emit=emit)

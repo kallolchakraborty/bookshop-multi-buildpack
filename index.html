@@ -3,13 +3,30 @@
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>bookshop-multi-buildpack — SAP BTP Developer Guide</title>
-  <meta name="description" content="Complete developer guide & downloadable source code for bookshop-multi-buildpack - SAP BTP multi-buildpack CAP application with Node.js and Python integration." />
-  <meta property="og:title" content="bookshop-multi-buildpack — SAP BTP Developer Guide" />
-  <meta property="og:description" content="Complete developer guide & downloadable source code for bookshop-multi-buildpack - SAP BTP multi-buildpack CAP application with Node.js and Python integration." />
+  <title>SAP BTP BookShop Multi-Buildpack — CAP Node.js &amp; Python AI Agent Guide</title>
+  <meta name="description" content="Complete developer guide &amp; enterprise architecture for SAP BTP Multi-Buildpack applications combining CAP Node.js OData V4 with co-located Python LangGraph AI agents." />
+  <meta name="keywords" content="SAP BTP, Cloud Foundry, Multi-Buildpack, CAP, SAP Cloud Application Programming Model, Node.js, Python, LangGraph, SAP HANA Cloud, REAL_VECTOR, OData V4, SAP Cloud SDK, Redis cache, AI Core" />
+  <meta name="author" content="Kallol Chakraborty" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <meta name="theme-color" content="#E95420" />
+  <link rel="canonical" href="https://kallolchakraborty.github.io/bookshop-multi-buildpack/" />
+
+  <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kallolchakraborty.github.io/bookshop-multi-buildpack/" />
+  <meta property="og:title" content="SAP BTP BookShop Multi-Buildpack — CAP Node.js &amp; Python AI Agent Guide" />
+  <meta property="og:description" content="Complete developer guide &amp; enterprise architecture for SAP BTP Multi-Buildpack applications combining CAP Node.js OData V4 with co-located Python LangGraph AI agents." />
+  <meta property="og:image" content="https://kallolchakraborty.github.io/bookshop-multi-buildpack/assets/diagrams/architecture.svg" />
+  <meta property="og:site_name" content="SAP BTP BookShop Multi-Buildpack" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="robots" content="index, follow" />
+  <meta name="twitter:url" content="https://kallolchakraborty.github.io/bookshop-multi-buildpack/" />
+  <meta name="twitter:title" content="SAP BTP BookShop Multi-Buildpack — CAP Node.js &amp; Python AI Agent Guide" />
+  <meta name="twitter:description" content="Complete developer guide &amp; enterprise architecture for SAP BTP Multi-Buildpack applications combining CAP Node.js OData V4 with co-located Python LangGraph AI agents." />
+  <meta name="twitter:image" content="https://kallolchakraborty.github.io/bookshop-multi-buildpack/assets/diagrams/architecture.svg" />
+
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,10 +36,65 @@
   <link rel="preload" href="css/main.css" as="style" />
   <link rel="stylesheet" href="css/tailwind.css" />
   <link rel="stylesheet" href="css/main.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Ubuntu:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Ubuntu:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" /></noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Ubuntu+Mono:wght@400;700&display=swap" /></noscript>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" /></noscript>
+
+  <!-- Structured Data / JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://kallolchakraborty.github.io/bookshop-multi-buildpack/#website",
+        "url": "https://kallolchakraborty.github.io/bookshop-multi-buildpack/",
+        "name": "SAP BTP BookShop Multi-Buildpack",
+        "description": "Enterprise reference application for SAP BTP multi-buildpack co-location with CAP Node.js and Python LangGraph AI Agent.",
+        "publisher": {
+          "@type": "Person",
+          "name": "Kallol Chakraborty",
+          "url": "https://www.linkedin.com/in/kallol-chakraborty-9728a699/"
+        },
+        "inLanguage": "en-US"
+      },
+      {
+        "@type": "SoftwareSourceCode",
+        "@id": "https://kallolchakraborty.github.io/bookshop-multi-buildpack/#software",
+        "name": "bookshop-multi-buildpack",
+        "programmingLanguage": ["JavaScript", "Node.js", "Python", "CDS", "SQL"],
+        "runtimePlatform": "SAP Business Technology Platform Cloud Foundry",
+        "codeRepository": "https://github.com/kallolchakraborty/bookshop-multi-buildpack",
+        "author": {
+          "@type": "Person",
+          "name": "Kallol Chakraborty",
+          "url": "https://www.linkedin.com/in/kallol-chakraborty-9728a699/"
+        },
+        "description": "SAP BTP multi-buildpack BookShop application combining Node.js CAP OData V4 with a co-located Python LangGraph AI process and SAP HANA REAL_VECTOR search."
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://kallolchakraborty.github.io/bookshop-multi-buildpack/#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://kallolchakraborty.github.io/bookshop-multi-buildpack/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Documentation",
+            "item": "https://kallolchakraborty.github.io/bookshop-multi-buildpack/docs.html"
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
   <script src="js/utils.js"></script>
   <script src="js/theme.js"></script>
 </head>
@@ -31,13 +103,25 @@
   <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-white dark:focus:bg-slate-900 focus:text-brand-500 focus:border focus:border-brand-500 focus:rounded-lg focus:shadow-lg focus:text-sm focus:font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500">Skip to main content</a>
 
   <!-- Navbar -->
-  <nav class="sticky top-0 left-0 right-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800">
+  <nav class="sticky top-0 left-0 right-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800" aria-label="Main Navigation">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
-        <a href="index.html" class="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-900 dark:text-white">
-          <span class="material-symbols-outlined text-brand-500" style="font-size: 24px;">database</span>
-          <span>bookshop-multi-buildpack</span>
-        </a>
+        <div class="flex items-center gap-3">
+          <a href="index.html" class="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-900 dark:text-white mr-1" aria-label="BookShop Home">
+            <span class="material-symbols-outlined text-brand-500" style="font-size: 24px;">database</span>
+            <span>bookshop-multi-buildpack</span>
+          </a>
+          <nav class="hidden sm:flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200 dark:border-slate-800" aria-label="Documentation Tabs">
+            <a href="docs.html#introduction" class="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400">
+              <span class="material-symbols-outlined text-[16px] text-brand-500">article</span>
+              <span>README</span>
+            </a>
+            <a href="docs.html#support" class="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400">
+              <span class="material-symbols-outlined text-[16px] text-brand-500">menu_book</span>
+              <span>Architecture Guide</span>
+            </a>
+          </nav>
+        </div>
         <div class="flex items-center gap-3">
           <a href="bookshop-app.zip" download="bookshop-app.zip" class="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 rounded-lg font-semibold text-xs transition-all">
             <span class="material-symbols-outlined text-[16px] text-brand-500">download</span>
@@ -51,7 +135,7 @@
           <button id="themeToggle" class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" aria-label="Toggle theme">
             <span class="material-symbols-outlined text-slate-600 dark:text-slate-400 text-[20px]">light_mode</span>
           </button>
-          <button class="open-share-btn w-10 h-10 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" aria-label="Share">
+          <button class="open-share-btn w-10 h-10 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" aria-label="Share documentation">
             <span class="material-symbols-outlined text-slate-600 dark:text-slate-400 text-[20px]">share</span>
           </button>
         </div>
@@ -78,10 +162,13 @@
         
         <!-- Primary CTAs -->
         <div class="flex flex-wrap items-center justify-center gap-4 mb-8">
-          <a href="docs.html" class="inline-flex items-center gap-2 px-6 py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-xl transition-all shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:-translate-y-0.5">
-            <span class="material-symbols-outlined text-[20px]">auto_stories</span>
-            <span>Browse Documentation</span>
-            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+          <a href="docs.html#introduction" class="inline-flex items-center gap-2 px-6 py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-xl transition-all shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:-translate-y-0.5">
+            <span class="material-symbols-outlined text-[20px]">article</span>
+            <span>Browse README</span>
+          </a>
+          <a href="docs.html#support" class="inline-flex items-center gap-2 px-6 py-3.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-semibold rounded-xl transition-all shadow-lg hover:-translate-y-0.5">
+            <span class="material-symbols-outlined text-[20px] text-brand-500">menu_book</span>
+            <span>Architecture Guide</span>
           </a>
           <a href="bookshop-app.zip" download="bookshop-app.zip" class="inline-flex items-center gap-2 px-6 py-3.5 font-semibold rounded-xl transition-all shadow-lg hover:-translate-y-0.5 border" style="background-color: #0f172a; color: #ffffff; border-color: #334155;">
             <span class="material-symbols-outlined text-[20px]">download_for_offline</span>
@@ -119,7 +206,7 @@
   </footer>
 
   <!-- Search Modal -->
-  <div id="search-modal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-label="Search">
+  <div id="search-modal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-label="Search documentation">
     <div id="search-modal-backdrop" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
     <div class="absolute top-20 left-1/2 -translate-x-1/2 w-full max-w-lg px-4">
       <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">

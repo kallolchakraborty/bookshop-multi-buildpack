@@ -2,27 +2,24 @@
 
 ## What is This Project?
 
-**bookshop-multi-buildpack** is a SAP Business Technology Platform (BTP) application that demonstrates the power of **Multi Buildpack** deployment. It combines a **Node.js** frontend (CAP/Express service) with a **Python** backend (ML/AI service) into a single deployable unit using the Multi Buildpack feature of SAP BTP Cloud Foundry.
+**bookshop-multi-buildpack** is an enterprise SAP Business Technology Platform (BTP) reference application demonstrating **Cloud Foundry Multi-Buildpack co-location**. It pairs an **SAP CAP Node.js edge gateway** (`@sap/cds` v10) with an **Enterprise Python LangGraph AI Agent & SAP HANA Cloud REAL_VECTOR RAG Engine** inside a single 512 MB container droplet.
 
-## Why Multi Buildpack?
+## Key Features & Production Architecture
 
-Single buildpack deployments are limited to one runtime environment. Multi Buildpack allows you to:
-- Run multiple languages/runtimes in the same application container
-- Keep frontend and backend concerns separated but co-located
-- Leverage the strengths of Node.js for HTTP/OData/API and Python for ML/Data processing
-- Simplify deployment topology without managing multiple applications
-
-## High-Level Architecture
-
-The application combines Node.js and Python runtimes in a single SAP BTP Cloud Foundry container, orchestrated by `server.js`.
-
-![Architecture Diagram](assets/diagrams/architecture.svg)
-
-## Key Features
-
-- **Dual Runtime**: Node.js (CAP/Express) + Python (Flask/FastAPI) in one container
-- **AI Integration**: `/ai/chat` endpoint with XSUAA-secured destinations
-- **Service Mesh**: Seamless binding to SAP BTP services (XSUAA, Destination, AI Core)
-- **Multi-Environment**: Production, local, and hybrid deployment configurations
-- **Automated Testing**: Integration tests for both runtimes and service bindings
-- **Developer Friendly**: Beginner-ready guide with downloadable source
+- **Dual Runtime Co-location**: Node.js and Python 3 co-located in a single Cloud Foundry container droplet with zero cold-start penalty over stdin/stdout JSON-RPC.
+- **Zero-Hardcoding BTP Destination Auto-Selection Engine**: Uses `@sap-cloud-sdk/connectivity` to auto-discover and resolve BTP Cockpit Destinations dynamically.
+- **4-Destination Real-Time Failover Cascade**:
+  <div class="failover-cascade">
+    <span class="fc-step p1">P1 · google/diffusiongemma-26b-a4b-it</span>
+    <span class="fc-arrow">→</span>
+    <span class="fc-step p2">P2 · google/gemma-4-31b-it</span>
+    <span class="fc-arrow">→</span>
+    <span class="fc-step p3">P3 · z-ai/glm-5.2</span>
+    <span class="fc-arrow">→</span>
+    <span class="fc-step fallback">Fallback · mistralai/mistral-nemotron</span>
+  </div>
+- **Stateful LangGraph Agent Pipeline**: Multi-turn agent workflow supporting book search, inventory stock checks, discount calculations, and recommendations.
+- **Enterprise Redis Prompt Cache**: Caches repeat completions (< 5ms response time) with automatic SAP BTP `redis-instance` binding.
+- **SAP HANA Cloud REAL_VECTOR Engine**: Cosine similarity search over 1536-dimensional book vector embeddings.
+- **Defense-in-Depth Guardrails**: Direct/indirect prompt injection defense, PII/secret scrubbing, XML prompt isolation, and competitor output filtering.
+- **LangSmith Telemetry & Observability**: Real-time tracing for prompt chains and graph node transitions.
