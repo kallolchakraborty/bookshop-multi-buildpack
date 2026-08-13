@@ -1,0 +1,166 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 680" width="100%" height="auto">
+  <defs>
+    <linearGradient id="grad-public" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fdf2f8" />
+      <stop offset="100%" stop-color="#fce7f3" />
+    </linearGradient>
+    <linearGradient id="grad-gateway" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#eff6ff" />
+      <stop offset="100%" stop-color="#dbeafe" />
+    </linearGradient>
+    <linearGradient id="grad-internal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0fdf4" />
+      <stop offset="100%" stop-color="#dcfce7" />
+    </linearGradient>
+    <linearGradient id="grad-backend" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff7ed" />
+      <stop offset="100%" stop-color="#ffedd5" />
+    </linearGradient>
+
+    <filter id="shadow" x="-8%" y="-8%" width="116%" height="116%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="rgba(15, 23, 42, 0.08)" />
+    </filter>
+
+    <marker id="arr-blue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M1,1 L7,4 L1,7 Z" fill="#2563eb" />
+    </marker>
+    <marker id="arr-amber" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M1,1 L7,4 L1,7 Z" fill="#d97706" />
+    </marker>
+    <marker id="arr-pink" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M1,1 L7,4 L1,7 Z" fill="#db2777" />
+    </marker>
+
+    <style>
+      .node-card { rx: 12; ry: 12; stroke-width: 1.5; filter: url(#shadow); }
+      .txt-hdr { font-family: Ubuntu, system-ui, sans-serif; font-size: 14px; font-weight: 700; fill: #0f172a; }
+      .txt-lbl { font-family: Ubuntu, system-ui, sans-serif; font-size: 11px; font-weight: 500; fill: #334155; }
+      .txt-sub { font-family: 'SF Mono', Consolas, monospace; font-size: 10px; fill: #64748b; }
+      .flow-path { stroke-dasharray: 6,4; animation: dash 1.6s linear infinite; }
+      @keyframes dash { to { stroke-dashoffset: -20; } }
+      .chip { rx: 4; ry: 4; fill: #ffffff; stroke-width: 1; }
+      .chip-txt { font-family: Ubuntu, system-ui, sans-serif; font-size: 10px; font-weight: 600; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1100" height="680" fill="#ffffff" rx="16" />
+
+  <!-- Title -->
+  <text x="550" y="36" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="19" font-weight="700" fill="#0f172a">Security Boundaries &amp; Data Flow</text>
+  <text x="550" y="56" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="12" fill="#64748b">Public Ingress Security • Process Isolation • Service Binding Encapsulation</text>
+
+  <!-- Component Cards -->
+  <!-- 1. Public Zone -->
+  <g transform="translate(30, 85)">
+    <rect width="230" height="230" fill="url(#grad-public)" stroke="#f472b6" class="node-card" />
+    <text x="115" y="30" text-anchor="middle" class="txt-hdr" fill="#be185d">1. Public Ingress Zone</text>
+    <text x="115" y="50" text-anchor="middle" class="txt-lbl">Cloud Foundry Router</text>
+    
+    <rect x="15" y="70" width="200" height="30" rx="6" fill="#ffffff" stroke="#f472b6" />
+    <text x="115" y="89" text-anchor="middle" class="txt-sub">TLS 1.3 / HTTPS Termination</text>
+
+    <rect x="15" y="115" width="200" height="30" rx="6" fill="#ffffff" stroke="#f472b6" />
+    <text x="115" y="134" text-anchor="middle" class="txt-sub">DDoS / Web Firewall Filter</text>
+
+    <rect x="15" y="160" width="200" height="30" rx="6" fill="#ffffff" stroke="#f472b6" />
+    <text x="115" y="179" text-anchor="middle" class="txt-sub">Port 443 -> Droplet $PORT</text>
+  </g>
+
+  <!-- 2. Gateway Zone (Node.js CAP) -->
+  <g transform="translate(300, 85)">
+    <rect width="240" height="230" fill="url(#grad-gateway)" stroke="#93c5fd" class="node-card" />
+    <text x="120" y="30" text-anchor="middle" class="txt-hdr" fill="#1d4ed8">2. Ingress Gateway (Node.js)</text>
+    <text x="120" y="50" text-anchor="middle" class="txt-lbl">Public Facing Process</text>
+    
+    <rect x="15" y="70" width="210" height="30" rx="6" fill="#ffffff" stroke="#93c5fd" />
+    <text x="120" y="89" text-anchor="middle" class="txt-sub">CORS Origin Whitelist</text>
+
+    <rect x="15" y="115" width="210" height="30" rx="6" fill="#ffffff" stroke="#93c5fd" />
+    <text x="120" y="134" text-anchor="middle" class="txt-sub">XSUAA JWT Authorization</text>
+
+    <rect x="15" y="160" width="210" height="30" rx="6" fill="#ffffff" stroke="#93c5fd" />
+    <text x="120" y="179" text-anchor="middle" class="txt-sub">Rate Limiting (50 req/min)</text>
+  </g>
+
+  <!-- 3. Internal Isolation Zone (Python) -->
+  <g transform="translate(580, 85)">
+    <rect width="240" height="230" fill="url(#grad-internal)" stroke="#86efac" class="node-card" />
+    <text x="120" y="30" text-anchor="middle" class="txt-hdr" fill="#15803d">3. Isolated Python Worker</text>
+    <text x="120" y="50" text-anchor="middle" class="txt-lbl">Internal Only (No Port)</text>
+    
+    <rect x="15" y="70" width="210" height="30" rx="6" fill="#ffffff" stroke="#86efac" />
+    <text x="120" y="89" text-anchor="middle" class="txt-sub">Zero Ingress Ports Opened</text>
+
+    <rect x="15" y="115" width="210" height="30" rx="6" fill="#ffffff" stroke="#86efac" />
+    <text x="120" y="134" text-anchor="middle" class="txt-sub">stdin / stdout Pipe Only</text>
+
+    <rect x="15" y="160" width="210" height="30" rx="6" fill="#ffffff" stroke="#86efac" />
+    <text x="120" y="179" text-anchor="middle" class="txt-sub">Protected Math &amp; LLM Stream</text>
+  </g>
+
+  <!-- 4. Protected Backends -->
+  <g transform="translate(860, 85)">
+    <rect width="210" height="230" fill="url(#grad-backend)" stroke="#fed7aa" class="node-card" />
+    <text x="105" y="30" text-anchor="middle" class="txt-hdr" fill="#c2410c">4. BTP Backends</text>
+    <text x="105" y="50" text-anchor="middle" class="txt-lbl">Service Credentials</text>
+    
+    <rect x="15" y="70" width="180" height="30" rx="6" fill="#ffffff" stroke="#fdba74" />
+    <text x="105" y="89" text-anchor="middle" class="txt-sub">SAP XSUAA Binding</text>
+
+    <rect x="15" y="115" width="180" height="30" rx="6" fill="#ffffff" stroke="#fdba74" />
+    <text x="105" y="134" text-anchor="middle" class="txt-sub">Destination Auth Key</text>
+
+    <rect x="15" y="160" width="180" height="30" rx="6" fill="#ffffff" stroke="#fdba74" />
+    <text x="105" y="179" text-anchor="middle" class="txt-sub">HANA Cloud TLS</text>
+  </g>
+
+  <!-- Flow Connectors Top (Y=200) -->
+  <path d="M 260,200 L 300,200" stroke="#db2777" stroke-width="2" class="flow-path" marker-end="url(#arr-pink)" />
+  <path d="M 540,200 L 580,200" stroke="#2563eb" stroke-width="2" class="flow-path" marker-end="url(#arr-blue)" />
+  <path d="M 820,200 L 860,200" stroke="#d97706" stroke-width="2" class="flow-path" marker-end="url(#arr-amber)" />
+
+  <!-- Security Audit Matrix Table (Bottom) -->
+  <g transform="translate(30, 340)">
+    <rect width="1040" height="310" fill="#f8fafc" stroke="#e2e8f0" rx="14" filter="url(#shadow)" />
+    <rect width="1040" height="42" fill="#f1f5f9" rx="14" />
+    <text x="520" y="26" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="14" font-weight="700" fill="#0f172a">Security Controls &amp; Threat Mitigation Matrix</text>
+
+    <!-- Header Row -->
+    <text x="60" y="65" font-family="Ubuntu, sans-serif" font-size="12" font-weight="700" fill="#0f172a">Boundary Layer</text>
+    <text x="260" y="65" font-family="Ubuntu, sans-serif" font-size="12" font-weight="700" fill="#0f172a">Primary Defense Mechanism</text>
+    <text x="580" y="65" font-family="Ubuntu, sans-serif" font-size="12" font-weight="700" fill="#0f172a">Mitigated Risk / Vulnerability</text>
+    <text x="880" y="65" font-family="Ubuntu, sans-serif" font-size="12" font-weight="700" fill="#0f172a">Enforcement Point</text>
+    <line x1="40" y1="75" x2="1000" y2="75" stroke="#e2e8f0" stroke-width="1" />
+
+    <!-- Row 1 -->
+    <text x="60" y="105" class="txt-lbl" font-weight="700">Public Ingress</text>
+    <text x="260" y="105" class="txt-sub">TLS 1.3 Encryption + CF Route Service</text>
+    <text x="580" y="105" class="txt-sub">Man-in-the-Middle (MITM) &amp; Eavesdropping</text>
+    <text x="880" y="105" class="txt-sub">Cloud Foundry Gorouter</text>
+
+    <!-- Row 2 -->
+    <text x="60" y="145" class="txt-lbl" font-weight="700">Node.js Gateway</text>
+    <text x="260" y="145" class="txt-sub">XSUAA JWT Validation + Express CORS</text>
+    <text x="580" y="145" class="txt-sub">Unauthorized Access &amp; CSRF Attacks</text>
+    <text x="880" y="145" class="txt-sub">srv/server.js Middleware</text>
+
+    <!-- Row 3 -->
+    <text x="60" y="185" class="txt-lbl" font-weight="700">Rate Control</text>
+    <text x="260" y="185" class="txt-sub">Token Bucket (50 req/min per user)</text>
+    <text x="580" y="185" class="txt-sub">Denial of Service (DoS) &amp; API Abuse</text>
+    <text x="880" y="185" class="txt-sub">express-rate-limit</text>
+
+    <!-- Row 4 -->
+    <text x="60" y="225" class="txt-lbl" font-weight="700">Python Worker</text>
+    <text x="260" y="225" class="txt-sub">No network sockets; stdin/stdout IPC</text>
+    <text x="580" y="225" class="txt-sub">Direct External Exploitation &amp; Port Scan</text>
+    <text x="880" y="225" class="txt-sub">srv/python.js Subprocess</text>
+
+    <!-- Row 5 -->
+    <text x="60" y="265" class="txt-lbl" font-weight="700">AI Core Outbound</text>
+    <text x="260" y="265" class="txt-sub">Dynamic BTP Destination Service Credentials</text>
+    <text x="580" y="265" class="txt-sub">Hardcoded API Key Leakage in Repos</text>
+    <text x="880" y="265" class="txt-sub">BTP Destination Binding</text>
+  </g>
+</svg>

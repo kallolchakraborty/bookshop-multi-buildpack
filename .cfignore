@@ -1,0 +1,12 @@
+node_modules/
+gen/
+.cds/
+*.sqlite*
+.env
+test/
+.git/
+
+# Credentials / bindings - never upload to CF droplets
+.cdsrc-private.json
+.deploy-vcap.json
+*.log

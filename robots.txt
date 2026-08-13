@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /scripts/
+Disallow: /js/
+Sitemap: https://yourusername.github.io/bookshop-multi-buildpack/sitemap.xml

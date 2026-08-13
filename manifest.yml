@@ -1,0 +1,52 @@
+# Cloud Foundry multi-buildpack deployment for the CAP bookshop.
+# Node.js provides @sap/cds; the python buildpack provides Python 3. The app is
+# Node-driven: Python (python/functions.py) only performs the discount math and
+# the OpenAI-compatible AI call (via the "ask" action). Node resolves the BTP
+# destination and passes URL + API key to the Python worker.
+#
+# Native multi-buildpack style: every listed buildpack is applied, in order.
+# The nodejs buildpack compiles and starts the app (`npm start`).
+#
+# Legacy alternative (CloudFoundry Multi-Buildpack): use
+#   buildpack: https://github.com/cloudfoundry/multi-buildpack.git
+# and list the buildpacks in ./buildpacks.
+---
+applications:
+  - name: bookshop-multi-buildpack
+    memory: 512M
+    buildpacks:
+      - python_buildpack
+      - nodejs_buildpack
+    command: npm start
+    # Pin the route so every push reuses the same URL (random-route would
+    # generate a fresh route and orphan the previous one on each deploy).
+    routes:
+      - route: bookshop-multi-buildpack.cfapps.us10-003.hana.ondemand.com
+    env:
+      PYTHON_BIN: python3
+      NODE_ENV: production
+      AI_MODEL: meta/llama-3.3-70b-instruct # default model used by the Python ask() call
+      AI_TIMEOUT: "900" # NVIDIA meta/llama-3.3-70b-instruct can take ~2min to first token
+    services:
+      - bookshop-multi-buildpack-db # HDI container on the existing HANA Cloud free-tier instance (hana-cloud)
+      - destination-service # Destination service: Node resolves "meta-llama-3-3-70b-instruct" (URL + auth) for Python
+      - bookshop-multi-buildpack-uaa # XSUAA: authentication/authorization (recommended for destinations)
+      # - connectivity-service # Connectivity service: only needed for on-premise/private destinations
+      # If you don't bind the destination service, set AI_BASE_URL / AI_API_KEY env vars
+      # and Node passes them down to the Python worker instead.
+
+  # HDI deployer: provisions the schema/data into the bookshop-multi-buildpack-db
+  # container from inside CF (gen/db build output). Runs once on push.
+  # After a successful deploy the process would exit; keeping it alive avoids CF
+  # treating the one-shot deploy as a crash (process health check, no route).
+  - name: bookshop-multi-buildpack-db-deployer
+    memory: 256M
+    path: gen/db
+    buildpacks:
+      - nodejs_buildpack
+    no-route: true
+    health-check-type: process
+    command: npm start && sleep infinity
+    timeout: 300
+    services:
+      - bookshop-multi-buildpack-db

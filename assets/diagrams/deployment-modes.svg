@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 680" width="100%" height="auto">
+  <defs>
+    <linearGradient id="grad-prod" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0fdf4" />
+      <stop offset="100%" stop-color="#dcfce7" />
+    </linearGradient>
+    <linearGradient id="grad-local" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#eff6ff" />
+      <stop offset="100%" stop-color="#dbeafe" />
+    </linearGradient>
+    <linearGradient id="grad-hybrid" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fdf2f8" />
+      <stop offset="100%" stop-color="#fce7f3" />
+    </linearGradient>
+
+    <filter id="shadow" x="-8%" y="-8%" width="116%" height="116%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="rgba(15, 23, 42, 0.08)" />
+    </filter>
+
+    <marker id="arr-blue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M1,1 L7,4 L1,7 Z" fill="#2563eb" />
+    </marker>
+    <marker id="arr-green" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M1,1 L7,4 L1,7 Z" fill="#16a34a" />
+    </marker>
+    <marker id="arr-pink" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M1,1 L7,4 L1,7 Z" fill="#db2777" />
+    </marker>
+
+    <style>
+      .node-card { rx: 12; ry: 12; stroke-width: 1.5; filter: url(#shadow); }
+      .txt-hdr { font-family: Ubuntu, system-ui, sans-serif; font-size: 14px; font-weight: 700; fill: #0f172a; }
+      .txt-lbl { font-family: Ubuntu, system-ui, sans-serif; font-size: 11px; font-weight: 500; fill: #334155; }
+      .txt-sub { font-family: 'SF Mono', Consolas, monospace; font-size: 10px; fill: #64748b; }
+      .flow-path { stroke-dasharray: 6,4; animation: dash 1.6s linear infinite; }
+      @keyframes dash { to { stroke-dashoffset: -20; } }
+      .chip { rx: 4; ry: 4; fill: #ffffff; stroke-width: 1; }
+      .chip-txt { font-family: Ubuntu, system-ui, sans-serif; font-size: 10px; font-weight: 600; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1100" height="680" fill="#ffffff" rx="16" />
+
+  <!-- Title -->
+  <text x="550" y="36" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="19" font-weight="700" fill="#0f172a">Deployment Modes Comparison</text>
+  <text x="550" y="56" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="12" fill="#64748b">Production (BTP CF Container) • Local Development • Hybrid Cloud Architecture</text>
+
+  <!-- Mode 1: Production -->
+  <g transform="translate(30, 85)">
+    <rect width="320" height="230" fill="url(#grad-prod)" stroke="#86efac" class="node-card" />
+    <text x="160" y="30" text-anchor="middle" class="txt-hdr" fill="#15803d">1. Production Mode (SAP BTP CF)</text>
+    
+    <rect x="20" y="50" width="130" height="70" fill="#ffffff" stroke="#bae6fd" rx="8" />
+    <text x="85" y="75" text-anchor="middle" class="txt-hdr">Node.js CAP</text>
+    <text x="85" y="95" text-anchor="middle" class="txt-sub">Port: 8080 ($PORT)</text>
+
+    <rect x="170" y="50" width="130" height="70" fill="#ffffff" stroke="#a7f3d0" rx="8" />
+    <text x="235" y="75" text-anchor="middle" class="txt-hdr">Python Worker</text>
+    <text x="235" y="95" text-anchor="middle" class="txt-sub">Co-located IPC</text>
+
+    <!-- Connect 1a -> 1b -->
+    <path d="M 150,85 L 170,85" stroke="#16a34a" stroke-width="2" class="flow-path" marker-end="url(#arr-green)" />
+
+    <rect x="20" y="140" width="280" height="70" fill="#ffffff" stroke="#fdba74" rx="8" />
+    <text x="160" y="165" text-anchor="middle" class="txt-hdr" fill="#c2410c">SAP BTP Cloud Services</text>
+    <text x="160" y="185" text-anchor="middle" class="txt-sub">XSUAA Auth • Destination Service • HANA Cloud</text>
+  </g>
+
+  <!-- Mode 2: Local -->
+  <g transform="translate(390, 85)">
+    <rect width="320" height="230" fill="url(#grad-local)" stroke="#93c5fd" class="node-card" />
+    <text x="160" y="30" text-anchor="middle" class="txt-hdr" fill="#1d4ed8">2. Local Development</text>
+    
+    <rect x="20" y="50" width="130" height="70" fill="#ffffff" stroke="#bae6fd" rx="8" />
+    <text x="85" y="75" text-anchor="middle" class="txt-hdr">Node.js CAP</text>
+    <text x="85" y="95" text-anchor="middle" class="txt-sub">http://localhost:4004</text>
+
+    <rect x="170" y="50" width="130" height="70" fill="#ffffff" stroke="#a7f3d0" rx="8" />
+    <text x="235" y="75" text-anchor="middle" class="txt-hdr">Python Worker</text>
+    <text x="235" y="95" text-anchor="middle" class="txt-sub">stdin / stdout bridge</text>
+
+    <!-- Connect 2a -> 2b -->
+    <path d="M 150,85 L 170,85" stroke="#2563eb" stroke-width="2" class="flow-path" marker-end="url(#arr-blue)" />
+
+    <rect x="20" y="140" width="280" height="70" fill="#ffffff" stroke="#cbd5e1" rx="8" />
+    <text x="160" y="165" text-anchor="middle" class="txt-hdr" fill="#475569">Local Developer Machine</text>
+    <text x="160" y="185" text-anchor="middle" class="txt-sub">In-Memory SQLite DB • Local Mock Auth</text>
+  </g>
+
+  <!-- Mode 3: Hybrid -->
+  <g transform="translate(750, 85)">
+    <rect width="320" height="230" fill="url(#grad-hybrid)" stroke="#f472b6" class="node-card" />
+    <text x="160" y="30" text-anchor="middle" class="txt-hdr" fill="#be185d">3. Hybrid Cloud Mode</text>
+    
+    <rect x="20" y="50" width="130" height="70" fill="#ffffff" stroke="#bae6fd" rx="8" />
+    <text x="85" y="75" text-anchor="middle" class="txt-hdr">Local Node.js</text>
+    <text x="85" y="95" text-anchor="middle" class="txt-sub">http://localhost:4004</text>
+
+    <rect x="170" y="50" width="130" height="70" fill="#ffffff" stroke="#f472b6" rx="8" />
+    <text x="235" y="75" text-anchor="middle" class="txt-hdr">Remote BTP AI</text>
+    <text x="235" y="95" text-anchor="middle" class="txt-sub">HTTPS Cloud Destination</text>
+
+    <!-- Connect 3a -> 3b -->
+    <path d="M 150,85 L 170,85" stroke="#db2777" stroke-width="2" class="flow-path" marker-end="url(#arr-pink)" />
+
+    <rect x="20" y="140" width="280" height="70" fill="#ffffff" stroke="#f472b6" rx="8" />
+    <text x="160" y="165" text-anchor="middle" class="txt-hdr" fill="#be185d">Hybrid Cloud Binding</text>
+    <text x="160" y="185" text-anchor="middle" class="txt-sub">Local CAP Node + Remote BTP Destination</text>
+  </g>
+
+  <!-- Comparison Matrix Table (Bottom) -->
+  <g transform="translate(30, 340)">
+    <rect width="1040" height="310" fill="#f8fafc" stroke="#e2e8f0" rx="14" filter="url(#shadow)" />
+    <rect width="1040" height="42" fill="#f1f5f9" rx="14" />
+    <text x="520" y="26" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="14" font-weight="700" fill="#0f172a">Deployment Strategy Matrix</text>
+
+    <!-- Header Row -->
+    <text x="60" y="65" font-family="Ubuntu, sans-serif" font-size="12" font-weight="700" fill="#0f172a">Feature</text>
+    <text x="280" y="65" font-family="Ubuntu, sans-serif" font-size="12" font-weight="700" fill="#15803d">1. Production (BTP CF)</text>
+    <text x="560" y="65" font-family="Ubuntu, sans-serif" font-size="12" font-weight="700" fill="#1d4ed8">2. Local Development</text>
+    <text x="840" y="65" font-family="Ubuntu, sans-serif" font-size="12" font-weight="700" fill="#be185d">3. Hybrid Cloud</text>
+    <line x1="40" y1="75" x2="1000" y2="75" stroke="#e2e8f0" stroke-width="1" />
+
+    <!-- Row 1 -->
+    <text x="60" y="105" class="txt-lbl" font-weight="700">Node.js Runtime</text>
+    <text x="280" y="105" class="txt-sub">BTP CF Droplet Container</text>
+    <text x="560" y="105" class="txt-sub">Localhost (npm start)</text>
+    <text x="840" y="105" class="txt-sub">Localhost (npm start)</text>
+
+    <!-- Row 2 -->
+    <text x="60" y="145" class="txt-lbl" font-weight="700">Python Worker</text>
+    <text x="280" y="145" class="txt-sub">Co-located in Droplet</text>
+    <text x="560" y="145" class="txt-sub">Co-located local process</text>
+    <text x="840" y="145" class="txt-sub">Remote BTP Service</text>
+
+    <!-- Row 3 -->
+    <text x="60" y="185" class="txt-lbl" font-weight="700">Database Layer</text>
+    <text x="280" y="185" class="txt-sub">SAP HANA Cloud (HDI)</text>
+    <text x="560" y="185" class="txt-sub">In-Memory SQLite</text>
+    <text x="840" y="185" class="txt-sub">SAP HANA Cloud / SQLite</text>
+
+    <!-- Row 4 -->
+    <text x="60" y="225" class="txt-lbl" font-weight="700">AI Core Target</text>
+    <text x="280" y="225" class="txt-sub">BTP Destination Service</text>
+    <text x="560" y="225" class="txt-sub">Local Env Var / Fallback</text>
+    <text x="840" y="225" class="txt-sub">BTP Destination Service</text>
+
+    <!-- Row 5 -->
+    <text x="60" y="265" class="txt-lbl" font-weight="700">Authentication</text>
+    <text x="280" y="265" class="txt-sub">SAP XSUAA JWT Validation</text>
+    <text x="560" y="265" class="txt-sub">Development Mock Auth</text>
+    <text x="840" y="265" class="txt-sub">SAP XSUAA OAuth2 Token</text>
+  </g>
+</svg>

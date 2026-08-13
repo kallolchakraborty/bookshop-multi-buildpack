@@ -1,0 +1,54 @@
+#### GET requests ####
+
+### Get all books
+GET http://localhost:4004/browse/Book
+Accept: application/json
+
+### Get a single book
+GET http://localhost:4004/browse/Book(201)
+Accept: application/json
+
+### Get all authors
+GET http://localhost:4004/browse/Author
+Accept: application/json
+
+### Get all orders
+GET http://localhost:4004/browse/Order
+Accept: application/json
+
+### Call the Python-backed discount function
+GET http://localhost:4004/browse/discount(title='The%20Bestseller')
+Accept: application/json
+
+#### POST requests ####
+
+### Create a new author
+POST http://localhost:4004/browse/Author
+Content-Type: application/json
+
+{
+  "ID": 900,
+  "name": "Kallol Test Author"
+}
+
+### Create a new book (references the author above)
+POST http://localhost:4004/browse/Book
+Content-Type: application/json
+
+{
+  "ID": 999,
+  "title": "Optimized Book",
+  "author_ID": 900,
+  "stock": 3,
+  "price": 25.00
+}
+
+### Ask the Llama AI model through the BTP destination "meta-llama-3-3-70b-instruct"
+### Needs `npm run mock:ai` running locally (development profile), or the destination on BTP.
+POST http://localhost:4004/ai/ask
+Content-Type: application/json
+
+{
+  "prompt": "Recommend two books and explain your choices.",
+  "model": "meta/llama-3.3-70b-instruct"
+}

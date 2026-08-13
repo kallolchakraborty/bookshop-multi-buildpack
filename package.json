@@ -1,0 +1,44 @@
+{
+  "name": "bookshop-multi-buildpack",
+  "version": "1.0.0",
+  "description": "CAP Node.js bookshop app with Python functions and destination-backed AI APIs on multiple buildpacks, plus documentation website.",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@cap-js/hana": "^3.0.2",
+    "@sap-cloud-sdk/connectivity": "^4.8.0",
+    "@sap-cloud-sdk/http-client": "^4.8.0",
+    "@sap-cloud-sdk/resilience": "^4.8.0",
+    "@sap/cds": "^10.0.5"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^3.0.2",
+    "@sap/cds-dk": "^10.0.7",
+    "@sap/hdi-deploy": "^5.7.0"
+  },
+  "scripts": {
+    "start": "NODE_PATH= cds-serve",
+    "watch": "NODE_PATH= cds watch",
+    "build": "NODE_PATH= cds build --production",
+    "mock:ai": "NODE_PATH= node test/mock-ai.js",
+    "test": "NODE_PATH= node test/discount.test.js",
+    "test:ai": "NODE_PATH= node test/ai-service.test.js",
+    "test:all": "NODE_PATH= npm test && NODE_PATH= npm run test:ai",
+    "docs:build": "node scripts/build.js",
+    "docs:start": "python3 -m http.server 3000",
+    "docs:dev": "node scripts/build.js && python3 -m http.server 3000"
+  },
+  "keywords": ["sap-btp", "multi-buildpack", "cap", "bookshop", "documentation"],
+  "license": "MIT",
+  "cds": {
+    "requires": {
+      "db": true,
+      "[production]": {
+        "auth": {
+          "kind": "dummy"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,216 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 680" width="100%" height="auto">
+  <defs>
+    <linearGradient id="grad-client" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#eff6ff" />
+      <stop offset="100%" stop-color="#dbeafe" />
+    </linearGradient>
+    <linearGradient id="grad-node" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="100%" stop-color="#e0f2fe" />
+    </linearGradient>
+    <linearGradient id="grad-auth" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff7ed" />
+      <stop offset="100%" stop-color="#ffedd5" />
+    </linearGradient>
+    <linearGradient id="grad-python" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0fdf4" />
+      <stop offset="100%" stop-color="#dcfce7" />
+    </linearGradient>
+    <linearGradient id="grad-ai" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fdf2f8" />
+      <stop offset="100%" stop-color="#fce7f3" />
+    </linearGradient>
+
+    <filter id="shadow" x="-8%" y="-8%" width="116%" height="116%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="rgba(15, 23, 42, 0.08)" />
+    </filter>
+
+    <marker id="arr-blue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M1,1 L7,4 L1,7 Z" fill="#2563eb" />
+    </marker>
+    <marker id="arr-amber" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M1,1 L7,4 L1,7 Z" fill="#d97706" />
+    </marker>
+    <marker id="arr-purple" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M1,1 L7,4 L1,7 Z" fill="#9333ea" />
+    </marker>
+    <marker id="arr-pink" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M1,1 L7,4 L1,7 Z" fill="#db2777" />
+    </marker>
+    <marker id="arr-green" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M1,1 L7,4 L1,7 Z" fill="#16a34a" />
+    </marker>
+
+    <style>
+      .node-card { rx: 12; ry: 12; stroke-width: 1.5; filter: url(#shadow); }
+      .txt-hdr { font-family: Ubuntu, system-ui, sans-serif; font-size: 14px; font-weight: 700; fill: #0f172a; }
+      .txt-lbl { font-family: Ubuntu, system-ui, sans-serif; font-size: 11px; font-weight: 500; fill: #334155; }
+      .txt-sub { font-family: 'SF Mono', Consolas, monospace; font-size: 10px; fill: #64748b; }
+      .flow-path { stroke-dasharray: 6,4; animation: dash 1.6s linear infinite; }
+      @keyframes dash { to { stroke-dashoffset: -20; } }
+      .chip { rx: 4; ry: 4; fill: #ffffff; stroke-width: 1; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1100" height="680" fill="#ffffff" rx="16" />
+
+  <!-- Title -->
+  <text x="550" y="36" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="19" font-weight="700" fill="#0f172a">AI Chat Event-Driven Request &amp; Token Stream Flow</text>
+  <text x="550" y="56" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="12" fill="#64748b">CAP OData Service • BTP Destination Service • Co-located Python Child Process • Llama 3.3 70B</text>
+
+  <!-- Component Cards (Increased Y to 95 and Height to 120 so sublabels fit nicely) -->
+  <!-- 1. Client -->
+  <g transform="translate(30, 95)">
+    <rect width="170" height="120" fill="url(#grad-client)" stroke="#bfdbfe" class="node-card" />
+    <text x="85" y="32" text-anchor="middle" class="txt-hdr">Web / Fiori Client</text>
+    <text x="85" y="54" text-anchor="middle" class="txt-lbl">EventSource / fetch()</text>
+    <rect x="15" y="72" width="140" height="26" rx="6" fill="#ffffff" stroke="#93c5fd" />
+    <text x="85" y="89" text-anchor="middle" class="txt-sub">POST /ai/ask/stream</text>
+  </g>
+
+  <!-- 2. CAP Server -->
+  <g transform="translate(250, 95)">
+    <rect width="170" height="120" fill="url(#grad-node)" stroke="#bae6fd" class="node-card" />
+    <text x="85" y="32" text-anchor="middle" class="txt-hdr">Node.js CAP Server</text>
+    <text x="85" y="54" text-anchor="middle" class="txt-lbl">@sap/cds + Express</text>
+    <rect x="15" y="72" width="140" height="26" rx="6" fill="#ffffff" stroke="#7dd3fc" />
+    <text x="85" y="89" text-anchor="middle" class="txt-sub">srv/ai-service.js</text>
+  </g>
+
+  <!-- 3. Destination Service -->
+  <g transform="translate(470, 95)">
+    <rect width="170" height="120" fill="url(#grad-auth)" stroke="#fed7aa" class="node-card" />
+    <text x="85" y="32" text-anchor="middle" class="txt-hdr">BTP Destination</text>
+    <text x="85" y="54" text-anchor="middle" class="txt-lbl">getAIDestination()</text>
+    <rect x="15" y="72" width="140" height="26" rx="6" fill="#ffffff" stroke="#fdba74" />
+    <text x="85" y="89" text-anchor="middle" class="txt-sub">API Key &amp; Base URL</text>
+  </g>
+
+  <!-- 4. Python Process -->
+  <g transform="translate(690, 95)">
+    <rect width="170" height="120" fill="url(#grad-python)" stroke="#bbf7d0" class="node-card" />
+    <text x="85" y="32" text-anchor="middle" class="txt-hdr">Python Worker</text>
+    <text x="85" y="54" text-anchor="middle" class="txt-lbl">stdin / stdout bridge</text>
+    <rect x="15" y="72" width="140" height="26" rx="6" fill="#ffffff" stroke="#86efac" />
+    <text x="85" y="89" text-anchor="middle" class="txt-sub">functions.py --worker</text>
+  </g>
+
+  <!-- 5. AI Service Provider -->
+  <g transform="translate(900, 95)">
+    <rect width="170" height="120" fill="url(#grad-ai)" stroke="#fbcfe8" class="node-card" />
+    <text x="85" y="32" text-anchor="middle" class="txt-hdr">NVIDIA AI Core</text>
+    <text x="85" y="54" text-anchor="middle" class="txt-lbl">Llama 3.3 70B Instruct</text>
+    <rect x="15" y="72" width="140" height="26" rx="6" fill="#ffffff" stroke="#f472b6" />
+    <text x="85" y="89" text-anchor="middle" class="txt-sub">chat/completions</text>
+  </g>
+
+  <!-- Forward Flow Connectors Top (Y=140) -->
+  <!-- 1 -> 2 -->
+  <path d="M 200,140 L 250,140" stroke="#2563eb" stroke-width="2" class="flow-path" marker-end="url(#arr-blue)" />
+  <rect x="211" y="129" width="28" height="22" rx="4" class="chip" stroke="#2563eb" stroke-width="1.5" />
+  <text x="225" y="144" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#2563eb">1</text>
+
+  <!-- 2 -> 3 -->
+  <path d="M 420,140 L 470,140" stroke="#d97706" stroke-width="2" class="flow-path" marker-end="url(#arr-amber)" />
+  <rect x="431" y="129" width="28" height="22" rx="4" class="chip" stroke="#d97706" stroke-width="1.5" />
+  <text x="445" y="144" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#d97706">2</text>
+
+  <!-- 3 -> 4 -->
+  <path d="M 640,140 L 690,140" stroke="#9333ea" stroke-width="2" class="flow-path" marker-end="url(#arr-purple)" />
+  <rect x="651" y="129" width="28" height="22" rx="4" class="chip" stroke="#9333ea" stroke-width="1.5" />
+  <text x="665" y="144" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#9333ea">3</text>
+
+  <!-- 4 -> 5 -->
+  <path d="M 860,140 L 900,140" stroke="#db2777" stroke-width="2" class="flow-path" marker-end="url(#arr-pink)" />
+  <rect x="866" y="129" width="28" height="22" rx="4" class="chip" stroke="#db2777" stroke-width="1.5" />
+  <text x="880" y="144" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#db2777">4</text>
+
+  <!-- SSE Token Stream Return Arc (Dipping cleanly to Y=255, completely clear of component cards and table) -->
+  <path d="M 985,215 L 985,255 L 115,255 L 115,215" stroke="#16a34a" stroke-width="2.5" fill="none" stroke-dasharray="6,4" class="flow-path" marker-end="url(#arr-green)" />
+
+  <!-- Central SSE Stream Label Box positioned on the horizontal segment (Y=255) -->
+  <rect x="420" y="242" width="260" height="26" rx="13" fill="#16a34a" stroke="#15803d" stroke-width="1" filter="url(#shadow)" />
+  <text x="550" y="259" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">5. Real-Time SSE Token Stream (data: {text})</text>
+
+  <!-- Steps Table Container (Moved down to Y=310) -->
+  <g transform="translate(30, 310)">
+    <rect width="1040" height="340" fill="#f8fafc" stroke="#e2e8f0" rx="14" filter="url(#shadow)" />
+    
+    <!-- Table Header -->
+    <rect width="1040" height="42" fill="#f1f5f9" rx="14" />
+    <text x="520" y="26" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="14" font-weight="700" fill="#0f172a">Execution Sequence &amp; Data Pipeline</text>
+
+    <!-- Column 1 Header -->
+    <text x="50" y="64" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#2563eb">PHASE 1: REQUEST DISPATCH &amp; RPC BINDING</text>
+
+    <!-- Step 1 -->
+    <g transform="translate(50, 78)">
+      <circle cx="12" cy="12" r="12" fill="#2563eb" />
+      <text x="12" y="16" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">1</text>
+      <text x="34" y="16" font-family="Ubuntu, sans-serif" font-size="11" fill="#334155"><tspan font-weight="700" fill="#0f172a">Client Request:</tspan> UI triggers POST /ai/ask/stream with prompt JSON.</text>
+    </g>
+
+    <!-- Step 2 -->
+    <g transform="translate(50, 114)">
+      <circle cx="12" cy="12" r="12" fill="#2563eb" />
+      <text x="12" y="16" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">2</text>
+      <text x="34" y="16" font-family="Ubuntu, sans-serif" font-size="11" fill="#334155"><tspan font-weight="700" fill="#0f172a">CAP Interceptor:</tspan> Node.js sets text/event-stream headers and flushes connection.</text>
+    </g>
+
+    <!-- Step 3 -->
+    <g transform="translate(50, 150)">
+      <circle cx="12" cy="12" r="12" fill="#d97706" />
+      <text x="12" y="16" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">3</text>
+      <text x="34" y="16" font-family="Ubuntu, sans-serif" font-size="11" fill="#334155"><tspan font-weight="700" fill="#0f172a">Destination Lookup:</tspan> Resolves target URL &amp; API key via BTP destination.</text>
+    </g>
+
+    <!-- Step 4 -->
+    <g transform="translate(50, 186)">
+      <circle cx="12" cy="12" r="12" fill="#9333ea" />
+      <text x="12" y="16" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">4</text>
+      <text x="34" y="16" font-family="Ubuntu, sans-serif" font-size="11" fill="#334155"><tspan font-weight="700" fill="#0f172a">Process IPC:</tspan> srv/python.js writes JSON-RPC request payload to stdin.</text>
+    </g>
+
+    <!-- Step 5 -->
+    <g transform="translate(50, 222)">
+      <circle cx="12" cy="12" r="12" fill="#db2777" />
+      <text x="12" y="16" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">5</text>
+      <text x="34" y="16" font-family="Ubuntu, sans-serif" font-size="11" fill="#334155"><tspan font-weight="700" fill="#0f172a">Outbound Stream:</tspan> Python worker initiates HTTP POST with stream=True.</text>
+    </g>
+
+    <!-- Divider Line -->
+    <line x1="530" y1="56" x2="530" y2="320" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4,4" />
+
+    <!-- Column 2 Header -->
+    <text x="560" y="64" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#16a34a">PHASE 2: REAL-TIME TOKEN STREAMING &amp; DISPATCH</text>
+
+    <!-- Step 6 -->
+    <g transform="translate(560, 78)">
+      <circle cx="12" cy="12" r="12" fill="#db2777" />
+      <text x="12" y="16" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">6</text>
+      <text x="34" y="16" font-family="Ubuntu, sans-serif" font-size="11" fill="#334155"><tspan font-weight="700" fill="#0f172a">LLM Generation:</tspan> NVIDIA AI Core streams token deltas as SSE data chunks.</text>
+    </g>
+
+    <!-- Step 7 -->
+    <g transform="translate(560, 114)">
+      <circle cx="12" cy="12" r="12" fill="#16a34a" />
+      <text x="12" y="16" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">7</text>
+      <text x="34" y="16" font-family="Ubuntu, sans-serif" font-size="11" fill="#334155"><tspan font-weight="700" fill="#0f172a">Stdout Relaying:</tspan> Python emits event JSON lines over stdout in real-time.</text>
+    </g>
+
+    <!-- Step 8 -->
+    <g transform="translate(560, 150)">
+      <circle cx="12" cy="12" r="12" fill="#16a34a" />
+      <text x="12" y="16" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">8</text>
+      <text x="34" y="16" font-family="Ubuntu, sans-serif" font-size="11" fill="#334155"><tspan font-weight="700" fill="#0f172a">Node Buffer Flush:</tspan> Node maps request ID and pushes data delta to client.</text>
+    </g>
+
+    <!-- Step 9 -->
+    <g transform="translate(560, 186)">
+      <circle cx="12" cy="12" r="12" fill="#475569" />
+      <text x="12" y="16" text-anchor="middle" font-family="Ubuntu, sans-serif" font-size="11" font-weight="700" fill="#ffffff">9</text>
+      <text x="34" y="16" font-family="Ubuntu, sans-serif" font-size="11" fill="#334155"><tspan font-weight="700" fill="#0f172a">Completion:</tspan> Stream finishes; Node sends data: [done] and closes connection.</text>
+    </g>
+  </g>
+</svg>

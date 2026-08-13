@@ -1,0 +1,8 @@
+# Used by the CloudFoundry Multi-Buildpack when the manifest
+# `buildpack: https://github.com/cloudfoundry/multi-buildpack.git` is set.
+# Each buildpack is applied in order, supplying both runtimes.
+# Pin revisions for reproducibility, e.g.:
+#   https://github.com/cloudfoundry/python-buildpack.git
+#   https://github.com/cloudfoundry/nodejs-buildpack.git
+https://github.com/cloudfoundry/python-buildpack.git
+https://github.com/cloudfoundry/nodejs-buildpack.git

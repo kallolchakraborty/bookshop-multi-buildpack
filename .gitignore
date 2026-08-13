@@ -1,0 +1,21 @@
+node_modules/
+.cds/
+gen/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+.env
+.env.example
+content/*.json
+*.log
+.vscode/
+.idea/
+dist/
+
+# Credentials / bindings / local overrides - never commit
+.cdsrc-private.json
+.deploy-vcap.json
+*.env.local
+
+# Documentation build artifacts
+.DS_Store
