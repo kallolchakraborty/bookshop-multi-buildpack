@@ -228,37 +228,55 @@ require('pm2').start('src/app.js');
 
 ## server.js Lifecycle
 
-```
-START
-  │
-  ▼
-[1] Spawn Python Process
-  │
-  ▼
-[2] Wait for Python /api/health (max 30 retries)
-  │
-  ▼
-[3] Python Healthy? ──No──► Exit with Error
-  │
-  Yes
-  ▼
-[4] Start Node.js Express Server
-  │
-  ▼
-[5] Setup Signal Handlers
-  │
-  ▼
-[6] Running
-  │
-  ▼
-[Shutdown] SIGTERM/SIGINT
-  │
-  ▼
-[7] Stop Node.js Server
-  │
-  ▼
-[8] Terminate Python
-  │
-  ▼
-END
-```
+<div class="lifecycle-wrapper">
+  <div class="lifecycle-step step-start">
+    <span class="lifecycle-icon">🚀</span>
+    <span class="lifecycle-text"><strong>START</strong></span>
+  </div>
+  <div class="lifecycle-arrow">▼</div>
+  <div class="lifecycle-step step-action">
+    <span class="lifecycle-badge">[1]</span>
+    <span class="lifecycle-text">Spawn Python Process</span>
+  </div>
+  <div class="lifecycle-arrow">▼</div>
+  <div class="lifecycle-step step-action">
+    <span class="lifecycle-badge">[2]</span>
+    <span class="lifecycle-text">Wait for Python <code>/api/health</code> <em>(max 30 retries)</em></span>
+  </div>
+  <div class="lifecycle-arrow">▼</div>
+  <div class="lifecycle-step step-decision">
+    <span class="lifecycle-badge">?</span>
+    <span class="lifecycle-text"><strong>Python Healthy?</strong></span>
+    <span class="lifecycle-branch">✗ No → Exit with Error</span>
+  </div>
+  <div class="lifecycle-arrow">▼ Yes</div>
+  <div class="lifecycle-step step-action">
+    <span class="lifecycle-badge">[4]</span>
+    <span class="lifecycle-text">Start Node.js Express Server</span>
+  </div>
+  <div class="lifecycle-arrow">▼</div>
+  <div class="lifecycle-step step-action">
+    <span class="lifecycle-badge">[5]</span>
+    <span class="lifecycle-text">Setup Signal Handlers</span>
+  </div>
+  <div class="lifecycle-arrow">▼</div>
+  <div class="lifecycle-step step-running">
+    <span class="lifecycle-icon">✅</span>
+    <span class="lifecycle-text"><strong>Running</strong></span>
+  </div>
+  <div class="lifecycle-arrow">▼ SIGTERM / SIGINT</div>
+  <div class="lifecycle-step step-shutdown">
+    <span class="lifecycle-badge">[7]</span>
+    <span class="lifecycle-text">Stop Node.js Server</span>
+  </div>
+  <div class="lifecycle-arrow">▼</div>
+  <div class="lifecycle-step step-shutdown">
+    <span class="lifecycle-badge">[8]</span>
+    <span class="lifecycle-text">Terminate Python</span>
+  </div>
+  <div class="lifecycle-arrow">▼</div>
+  <div class="lifecycle-step step-end">
+    <span class="lifecycle-icon">🏁</span>
+    <span class="lifecycle-text"><strong>END</strong></span>
+  </div>
+</div>

@@ -921,3 +921,133 @@ html.dark .tier-api {
 html.dark .tier-unit {
   background: linear-gradient(135deg, #E95420 0%, #C34113 100%);
 }
+
+/* ========== server.js Lifecycle Flowchart ========== */
+.lifecycle-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin: 2rem auto;
+  max-width: 480px;
+}
+
+.lifecycle-step {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-secondary);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.lifecycle-step:hover {
+  transform: translateX(3px);
+  box-shadow: 0 4px 16px rgba(233, 84, 32, 0.15);
+}
+
+/* Step variants */
+.step-start, .step-end {
+  background: linear-gradient(135deg, #E95420 0%, #C34113 100%);
+  border-color: #a83510;
+  color: #fff;
+  justify-content: center;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.step-action {
+  background: var(--bg-secondary);
+  border-left: 3px solid #E95420;
+}
+.step-decision {
+  background: linear-gradient(135deg, rgba(233,84,32,0.08) 0%, rgba(233,84,32,0.04) 100%);
+  border: 1px solid rgba(233,84,32,0.35);
+  border-left: 3px solid #E95420;
+  flex-wrap: wrap;
+}
+.step-running {
+  background: linear-gradient(135deg, rgba(34,197,94,0.12) 0%, rgba(34,197,94,0.06) 100%);
+  border: 1px solid rgba(34,197,94,0.35);
+  border-left: 3px solid #22c55e;
+  justify-content: center;
+  font-weight: 700;
+}
+.step-shutdown {
+  background: linear-gradient(135deg, rgba(100,116,139,0.1) 0%, rgba(100,116,139,0.05) 100%);
+  border-left: 3px solid #64748b;
+}
+
+.lifecycle-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.lifecycle-badge {
+  flex-shrink: 0;
+  min-width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #E95420;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0;
+}
+.step-decision .lifecycle-badge {
+  background: #E95420;
+  transform: rotate(45deg);
+  border-radius: 4px;
+}
+.step-decision .lifecycle-badge span {
+  transform: rotate(-45deg);
+}
+
+.lifecycle-text {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  flex: 1;
+  line-height: 1.4;
+}
+.step-start .lifecycle-text,
+.step-end .lifecycle-text {
+  color: #fff;
+}
+
+.lifecycle-branch {
+  font-size: 0.7rem;
+  color: #ef4444;
+  font-weight: 600;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.25);
+  border-radius: 20px;
+  padding: 2px 10px;
+  margin-left: auto;
+}
+
+.lifecycle-arrow {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 4px 0;
+  letter-spacing: 0.04em;
+}
+
+/* Dark mode */
+html.dark .step-action {
+  background: rgba(255,255,255,0.03);
+}
+html.dark .step-decision {
+  background: rgba(233,84,32,0.06);
+}
+html.dark .step-shutdown {
+  background: rgba(255,255,255,0.03);
+}
+html.dark .step-running {
+  background: rgba(34,197,94,0.08);
+}
