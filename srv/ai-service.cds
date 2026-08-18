@@ -1,7 +1,7 @@
 // Enterprise AI Service exposed at path "/ai".
 // Delegates prompts, SAP HANA Cloud Vector RAG queries, and LangGraph agent requests
 // to the persistent co-located Python worker.
-service AIService @(path : '/ai') {
+service AIService @(path : '/ai', requires : 'authenticated-user') {
 
   // Single-turn prompt completion action (direct LLM call via Python worker).
   action ask(

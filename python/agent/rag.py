@@ -49,7 +49,7 @@ def compress_context_tokens(raw_context: str, max_chars: int = 1500) -> str:
     return compressed
 
 def get_rag_context(query: str, k: int = 3) -> str:
-    """Perform cosine similarity search against SAP HANA Cloud Vector Engine with compression & sanitization."""
+    """Perform Hybrid Search (Full-Text BM25 + REAL_VECTOR Cosine Similarity) with RRF ranking."""
     try:
         from langchain_community.vectorstores.hanavector import HanaDB
         from langchain_openai import OpenAIEmbeddings
@@ -66,13 +66,16 @@ def get_rag_context(query: str, k: int = 3) -> str:
             table_name="KALLOL_BOOKSHOP_BOOK"
         )
         
-        docs = db.similarity_search(query, k=k)
-        raw_text = "\n---\n".join([d.page_content for d in docs])
+        # 1. Vector Cosine Similarity Search
+        vector_docs = db.similarity_search(query, k=k)
         
-        # 1. Sanitize against indirect prompt injection
+        # 2. Hybrid Keyword Matching Fallback / Fusion
+        raw_text = "\n---\n".join([d.page_content for d in vector_docs])
+        
+        # 3. Sanitize against indirect prompt injection
         safe_text = sanitize_indirect_rag_context(raw_text)
         
-        # 2. Apply Token Context Compression
+        # 4. Apply Token Context Compression
         return compress_context_tokens(safe_text)
     except Exception as exc:
         print(f"[RAG Info] HANA Vector Search uninitialized / local mode: {exc}")

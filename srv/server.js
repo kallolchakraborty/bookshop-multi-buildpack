@@ -60,6 +60,14 @@ cds.once('bootstrap', (app) => {
     res.status(200).json({ status: 'UP', timestamp: new Date().toISOString() })
   })
 
+  // Metrics Endpoint (/metrics)
+  app.get('/metrics', (req, res) => {
+    let totalRequests = 0
+    for (const timestamps of ipRequestCache.values()) totalRequests += timestamps.length
+    res.setHeader('Content-Type', 'text/plain; version=0.0.4')
+    res.send(`# HELP bookshop_rate_limit_requests Total active rate limit tracking entries\n# TYPE bookshop_rate_limit_requests counter\nbookshop_rate_limit_requests ${totalRequests}\n`)
+  })
+
   // Readiness Probe Endpoint (/readyz)
   app.get('/readyz', async (req, res) => {
     try {
