@@ -24,31 +24,10 @@
 
 ## Python Dependencies (`python/requirements.txt`)
 
-### LangChain / LangGraph / LangSmith Ecosystem
-
-| Package | Version | Purpose |
-|---------|---------|---------|
-| `langchain` | `>=0.3.0` | Prompt templates, chain construction, LLM I/O |
-| `langchain-core` | `>=0.3.0` | Core LangChain primitives (RunnableSequence, ChatMessages) |
-| `langchain-community` | `>=0.3.0` | Community integrations (HanaDB VectorStore) |
-| `langchain-openai` | `>=0.2.0` | ChatOpenAI wrapper for NVIDIA API-compatible endpoints |
-| `langgraph` | `>=0.2.0` | Stateful multi-node agent StateGraph orchestration |
-| `langsmith` | `>=0.1.0` | Real-time LLM observability & prompt chain tracing (optional, no-op if keys not set) |
-
-### SAP HANA Cloud & Vector Engine
+### Core Database, Redis & Networking
 
 | Package | Version | Purpose |
 |---------|---------|---------|
 | `hdbcli` | `>=2.20.0` | SAP HANA Cloud Python client for `REAL_VECTOR(1536)` embeddings & `COSINE_SIMILARITY()` search |
-
-### Enterprise Prompt Caching
-
-| Package | Version | Purpose |
-|---------|---------|---------|
 | `redis` | `>=5.0.0` | SAP BTP `redis-instance` client for prompt/response caching (< 5ms TTL lookups) |
-
-### HTTP & Streaming
-
-| Package | Version | Purpose |
-|---------|---------|---------|
 | `httpx` | `>=0.27.0` | Async HTTP streaming client (SSE token streaming to `/ai/ask/stream`) |

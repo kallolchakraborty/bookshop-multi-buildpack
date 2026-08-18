@@ -2,7 +2,7 @@
 
 ## What is This Project?
 
-**bookshop-multi-buildpack** is an enterprise SAP Business Technology Platform (BTP) reference application demonstrating **Cloud Foundry Multi-Buildpack co-location**. It pairs an **SAP CAP Node.js edge gateway** (`@sap/cds` v10) with an **Enterprise Python LangGraph AI Agent & SAP HANA Cloud REAL_VECTOR RAG Engine** inside a single 512 MB container droplet.
+**bookshop-multi-buildpack** is an enterprise SAP Business Technology Platform (BTP) reference application demonstrating **Cloud Foundry Multi-Buildpack co-location**. It pairs an **SAP CAP Node.js edge gateway** (`@sap/cds` v10) with a **Python AI Service Worker & SAP HANA Cloud REAL_VECTOR RAG Engine** inside a single 512 MB container droplet.
 
 ## Key Features & Production Architecture
 
@@ -18,8 +18,9 @@
     <span class="fc-arrow">→</span>
     <span class="fc-step fallback">Fallback · mistralai/mistral-nemotron</span>
   </div>
-- **Stateful LangGraph Agent Pipeline**: Multi-turn agent workflow supporting book search, inventory stock checks, discount calculations, and recommendations.
+- **Enterprise Python AI Worker Pipeline**: Multi-turn AI worker workflow supporting catalog search, discount calculations, and AI completions.
 - **Enterprise Redis Prompt Cache**: Caches repeat completions (< 5ms response time) with automatic SAP BTP `redis-instance` binding.
 - **SAP HANA Cloud REAL_VECTOR Engine**: Cosine similarity search over 1536-dimensional book vector embeddings.
 - **Defense-in-Depth Guardrails**: Direct/indirect prompt injection defense, PII/secret scrubbing, XML prompt isolation, and competitor output filtering.
-- **LangSmith Telemetry & Observability**: Real-time tracing for prompt chains and graph node transitions.
+- **Structured Application Telemetry & Observability**: Real-time logging and tracing for prompt executions and backend responses.
+

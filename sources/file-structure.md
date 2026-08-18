@@ -37,14 +37,13 @@ bookshop-multi-buildpack/
 │   ├── python.js                       # Zero-latency stdin/stdout IPC process bridge to functions.py
 │   └── server.js                       # Rate limiter (15 req/min), Helmet, and /healthz & /readyz probes
 │
-├── python/                             # Co-located Python ML & LangGraph Worker
+├── python/                             # Co-located Python ML Worker
 │   ├── functions.py                    # Persistent Python RPC process (stdin/stdout JSON-RPC listener)
-│   ├── requirements.txt                # Python packages (langchain, langgraph, hdbcli, redis, httpx)
+│   ├── requirements.txt                # Python packages (hdbcli, redis, httpx)
 │   │
-│   ├── agent/                          # LangGraph Agent, Guardrails, Cache & Router
+│   ├── agent/                          # Python AI Module, Guardrails, Cache & Router
 │   │   ├── __init__.py
 │   │   ├── cache.py                    # Enterprise Redis prompt & response cache (< 5ms)
-│   │   ├── graph.py                    # Stateful LangGraph StateGraph pipeline
 │   │   ├── guardrails.py               # Defense-in-depth guardrails (injection + PII scrubber)
 │   │   ├── llm_router.py               # Multi-model router & 4-destination failover cascade
 │   │   ├── logger.py                   # SAP Application Logging Service structured logger

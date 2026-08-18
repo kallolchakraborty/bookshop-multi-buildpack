@@ -4,7 +4,7 @@
 
 ![Architecture Diagram](assets/diagrams/architecture.svg)
 
-The **BookShop Multi-Buildpack** application is an SAP BTP Cloud Foundry enterprise pattern built with SAP CAP (`@sap/cds`). It seamlessly combines a **Node.js runtime** (accepting OData V4 client requests) with a **co-located Python process** running a stateful **LangGraph AI Agent**, **LangChain Chains**, **Enterprise Redis Prompt Cache**, and an **SAP HANA Cloud REAL_VECTOR RAG Engine**.
+The **BookShop Multi-Buildpack** application is an SAP BTP Cloud Foundry enterprise pattern built with SAP CAP (`@sap/cds`). It seamlessly combines a **Node.js runtime** (accepting OData V4 client requests) with a **co-located Python process** running an **AI Service Worker**, **Enterprise Redis Prompt Cache**, **Defense-in-Depth Guardrails**, and an **SAP HANA Cloud REAL_VECTOR RAG Engine**.
 
 ### Component & Process Flow
 
@@ -16,7 +16,7 @@ The **BookShop Multi-Buildpack** application is an SAP BTP Cloud Foundry enterpr
 3. **Python Worker Bridge (`python/functions.py --worker`)**:
    - A single, persistent Python process spawned lazily on startup by `srv/python.js`.
    - Communicates with Node.js via newline-delimited JSON-RPC over `stdin`/`stdout` (0ms per-request cold start).
-4. **LangChain & LangGraph Stateful Agent Pipeline**:
+4. **Python AI Execution & Guardrail Pipeline**:
    - **Input Guardrails**: Scans for prompt injection attacks and redacts PII/secrets.
    - **Enterprise Redis Prompt Cache**: Checks `redis-instance` for cached completions (< 5ms response time).
    - **SAP HANA Cloud REAL_VECTOR Search**: Performs 1536-dim vector similarity search over book embeddings.
@@ -37,7 +37,7 @@ The **BookShop Multi-Buildpack** application is an SAP BTP Cloud Foundry enterpr
 | Component | Technology | Responsibility | Communication |
 |-----------|------------|----------------|---------------|
 | **Node.js CAP Gateway** | `@sap/cds` v10 / Express | OData V4 API (`/browse`), Rate limiting, Auto-Destination resolution, SSE streaming (`/ai/ask/stream`) | `http` on `$PORT` |
-| **Python ML & AI Worker** | Python 3 / LangChain / LangGraph | Input/Output Guardrails, Redis Cache, SAP HANA Vector RAG, Stateful Agent Workflow, Failover LLM Routing | `stdin`/`stdout` JSON-RPC bridge |
+| **Python ML & AI Worker** | Python 3 | Input/Output Guardrails, Redis Cache, SAP HANA Vector RAG, AI Worker Execution, Failover LLM Routing | `stdin`/`stdout` JSON-RPC bridge |
 | **SAP BTP Services** | XSUAA, Destination, Redis, SAP HANA Cloud | Auth JWT validation, Destination key lookup, Prompt cache (< 5ms), `REAL_VECTOR(1536)` storage | SAP BTP Service Bindings |
 
 ## Security Boundaries

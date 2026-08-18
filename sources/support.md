@@ -14,7 +14,7 @@
 5. [Multi-Model Router & 4-Destination Failover Cascade](#5-multi-model-router--4-destination-failover-cascade)
 6. [Enterprise Redis Prompt & Completion Caching Engine](#6-enterprise-redis-prompt--completion-caching-engine)
 7. [Defense-in-Depth AI Guardrail System](#7-defense-in-depth-ai-guardrail-system)
-8. [LangChain & LangGraph Stateful Agent Execution Pipeline](#8-langchain--langgraph-stateful-agent-execution-pipeline)
+8. [Python AI Execution & Guardrail Pipeline](#8-python-ai-execution--guardrail-pipeline)
 9. [SAP HANA Cloud REAL_VECTOR Engine & Embedding Migration](#9-sap-hana-cloud-real_vector-engine--embedding-migration)
 10. [Harnessing & Resilience Subsystems](#10-harnessing--resilience-subsystems)
 11. [RAG Triad Evaluation & Benchmark Suite](#11-rag-triad-evaluation--benchmark-suite)
@@ -26,7 +26,7 @@
 
 ## 1. Architectural Overview & Co-Location Mechanics
 
-The **BookShop Multi-Buildpack** application is an enterprise reference architecture demonstrating **multi-runtime co-location inside a single 512 MB Cloud Foundry droplet**. It pairs a high-throughput **SAP CAP Node.js edge gateway** (`@sap/cds` v10) with an **Enterprise LangGraph Python Agent & SAP HANA Cloud REAL_VECTOR RAG Engine**.
+The **BookShop Multi-Buildpack** application is an enterprise reference architecture demonstrating **multi-runtime co-location inside a single 512 MB Cloud Foundry droplet**. It pairs a high-throughput **SAP CAP Node.js edge gateway** (`@sap/cds` v10) with a **Python AI Service Worker & SAP HANA Cloud REAL_VECTOR RAG Engine**.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -53,7 +53,6 @@ The **BookShop Multi-Buildpack** application is an enterprise reference architec
 │  │ ├─ Input Guardrails: DAN injection scanner, PII & credential masking, XML tag isolation   │  │
 │  │ ├─ Redis Completion Cache: SHA-256 (model:prompt) hash, < 5ms hit response time           │  │
 │  │ ├─ SAP HANA Cloud REAL_VECTOR: Cosine similarity search over 1536-dim embeddings          │  │
-│  │ ├─ LangGraph Stateful Agent: Multi-turn StateGraph with context memory compression        │  │
 │  │ ├─ Multi-Model Router: Automatic 4-destination failover cascade with exponential backoff  │  │
 │  │ └─ Output Guardrails: Competitor name redaction & groundedness verification               │  │
 │  └───────────────────────────────────────────────────────────────────────────────────────────┘  │
@@ -346,9 +345,9 @@ Implemented in `python/agent/guardrails.py`:
 
 ---
 
-## 8. LangChain & LangGraph Stateful Agent Execution Pipeline
+## 8. Python AI Execution & Guardrail Pipeline
 
-Implemented in `python/agent/graph.py` and `python/agent/nodes.py`:
+Implemented in `python/functions.py` and `python/agent/`:
 
 ```
        ┌───────────────────────┐
